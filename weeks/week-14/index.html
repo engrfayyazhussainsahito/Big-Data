@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 14: Privacy Engineering, Regulation, and Responsible AI | MS Big Data</title>
+  <meta name="description" content="Engineer compliance into data systems: PII masking, tokenization, GDPR/CCPA subject rights, retention policies, and ethical algorithmic auditing.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body data-root="../../" data-page-id="week-14" data-title="Week 14: Privacy Engineering, Regulation, and Responsible AI">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Week 14 Overview</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 14 — Privacy &amp; Ethics</div>
+        <h1>Week 14: Privacy Engineering, Regulation, and Responsible AI</h1>
+        <p class="lead">Engineer compliance into data systems: PII masking, tokenization, GDPR/CCPA subject rights, retention policies, and ethical algorithmic auditing.</p>
+      </header>
+      <section style="margin-bottom: 2.5rem;">
+        <h2>Week Learning Objectives</h2>
+        <ul style="margin-top: 1rem; line-height: 1.8; color: var(--text-secondary);">
+          <li>Embed Privacy-by-Design directly into data collection, transformation, and storage.</li><li>Implement PII detection, automated hashing, format-preserving encryption, and tokenization.</li><li>Build automated workflows for GDPR/CCPA Subject Access Requests (SAR) and Right-to-Erasure.</li><li>Design immutable retention rules, data tombstoning, and deletion cascades.</li><li>Audit training datasets and downstream ML models for disparate impact and bias.</li>
+        </ul>
+      </section>
+      <h2>Lessons in this Module</h2>
+      <section class="grid">
+        
+      <article class="card week-card">
+        <span class="week-num">Lesson 14.1 · Advanced</span>
+        <h3>Privacy Engineering from First Principles</h3>
+        <p>Moving from legal policy to technical reality: pseudonymization, differential privacy, k-anonymity, and zero-trust data access.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="privacy-engineering-from-first-principles.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 14.2 · Advanced</span>
+        <h3>Automated PII Detection, Masking, and Tokenization</h3>
+        <p>Identifying sensitive Personally Identifiable Information in transit and at rest using regex, ML classifiers, hashing, and token vaults.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="pii-detection-masking-and-tokenization.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 14.3 · Advanced</span>
+        <h3>GDPR, CCPA, HIPAA, and Global Regulatory Mandates</h3>
+        <p>Engineering for compliance: lawful basis, consent registries, cross-border data residency, and audit log immutability.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="gdpr-ccpa-and-regulatory-landscape.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 14.4 · Advanced</span>
+        <h3>Data Retention, Erasure Workflows, and Subject Access Rights</h3>
+        <p>Executing 'Right to be Forgotten' across immutable Lakehouse table snapshots (Iceberg/Delta), backup archives, and stream logs.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="data-retention-deletion-and-subject-rights.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 14.5 · Advanced</span>
+        <h3>Responsible AI, Bias Auditing, and Algorithmic Fairness</h3>
+        <p>Evaluating demographic parity, equalized odds, and proxy variables in big training datasets to prevent discriminatory model decisions.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="responsible-ai-and-algorithmic-fairness.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      </section>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Modeled for Graduate Rigor.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

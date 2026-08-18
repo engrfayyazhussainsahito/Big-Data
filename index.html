@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MS Big Data — Interactive Graduate Learning Platform</title>
+  <meta name="description" content="A comprehensive zero-to-advanced MS-level Big Data interactive curriculum covering distributed systems, Spark, Kafka, lakehouses, Cloud, DataOps, and MLOps.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body data-root="" data-page-id="home" data-title="MS Big Data Home">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <header class="hero">
+        <div class="eyebrow">Graduate Curriculum &amp; Architecture Platform</div>
+        <h1>MS Big Data Interactive Learning Platform</h1>
+        <p class="lead">A complete zero-to-advanced master's level big data curriculum. Master distributed computing, Apache Spark, Kafka streaming, Lakehouse architectures (Iceberg, Delta Lake), cloud analytics, DataOps, and GenAI data pipelines with hands-on engineering drills.</p>
+        <div class="toolbar">
+          <a class="btn btn-primary" href="weeks/week-00/lab-readiness-and-learning-path.html">🚀 Start Course (Lesson 0.1)</a>
+          <a class="btn" href="interactive-lab.html">⚡ Interactive Lab Playground</a>
+          <a class="btn" href="architecture.html">📐 Architecture Blueprint</a>
+          <a class="btn" href="glossary.html">📖 Terminology Glossary</a>
+          <button class="theme-toggle btn">🌓 Toggle Theme</button>
+        </div>
+      </header>
+
+      <!-- Interactive Widgets Container -->
+      <section id="interactive-showcase" style="margin-bottom: 3.5rem;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">⚡ Live Interactive Data Engineering Tools</h2>
+        <div id="sqlPlaygroundWidget"></div>
+        <div id="clusterCalculatorWidget"></div>
+        <div id="medallionInspectorWidget"></div>
+      </section>
+
+      <!-- Key Pillar Cards -->
+      <section class="grid">
+        <article class="card icon-card" data-icon="🎓">
+          <h2>Graduate-Level Rigor</h2>
+          <p>81 deeply researched lessons with formal mathematical foundations, physical hardware limits, and academic citations (VLDB/SIGMOD).</p>
+        </article>
+        <article class="card icon-card" data-icon="⚡">
+          <h2>In-Browser Interactive Labs</h2>
+          <p>Real-time SQL query execution, distributed cluster capacity calculators, and Medallion Layer inspection tools.</p>
+        </article>
+        <article class="card icon-card" data-icon="🏛️">
+          <h2>Modern Lakehouse Architecture</h2>
+          <p>Deep-dive coverage of Apache Iceberg, Delta Lake, Apache Hudi, Parquet encoding, dbt, and DataHub catalog lineage.</p>
+        </article>
+        <article class="card icon-card" data-icon="🤖">
+          <h2>GenAI &amp; Vector Data Pipelines</h2>
+          <p>Cutting-edge modules on RAG data ingestion, vector databases (Milvus, pgvector), data contracts, and feature stores.</p>
+        </article>
+      </section>
+
+      <h2 style="font-size: 1.8rem; font-weight: 800; margin: 3rem 0 1.5rem;">17-Week Curriculum Overview</h2>
+      <section class="grid">
+        
+      <article class="card week-card">
+        <span class="week-num">Week 0 · 5 Lessons</span>
+        <h3>Big Data Bridge and Lab Readiness</h3>
+        <p>Build the foundational technical skills for safe, reproducible data engineering practice: Linux, SQL, Python, Git, and isolated cluster tools.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 0 — Bridge Module</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-00/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 1 · 5 Lessons</span>
+        <h3>Big Data Foundations and the Data Mindset</h3>
+        <p>Understand why scale breaks single-machine architectures and how Volume, Velocity, Variety, Veracity, and Value dictate data platform engineering.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 1 — Foundations & Mindset</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-01/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 2 · 5 Lessons</span>
+        <h3>Relational Storage, Modeling, and SQL Depth</h3>
+        <p>Master physical relational storage, OLTP vs OLAP modeling, 3NF normalization vs dimensional Star/Snowflake schemas, indexing, and NoSQL trade-offs.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 2 — Storage & Modeling</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-02/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 3 · 5 Lessons</span>
+        <h3>Distributed Systems, Hadoop, and Apache Spark</h3>
+        <p>Understand horizontal scaling, consensus, HDFS, YARN, MapReduce, and how Apache Spark revolutionized in-memory big data processing.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 3 — Distributed Computing</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-03/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 4 · 5 Lessons</span>
+        <h3>Batch Ingestion, ETL/ELT, and Orchestration</h3>
+        <p>Move data reliably across boundary zones: full/incremental loads, Change Data Capture (CDC), data contracts, schema evolution, and Airflow DAGs.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 4 — Ingestion & ETL/ELT</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-04/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 5 · 5 Lessons</span>
+        <h3>Real-Time Streaming: Kafka, Flink, and Event Logs</h3>
+        <p>Process continuous event streams with Apache Kafka, Apache Flink, and Spark Structured Streaming using event time semantics and watermarks.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 5 — Stream Processing</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-05/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 6 · 5 Lessons</span>
+        <h3>Warehouses, Data Lakes, and Lakehouse Architecture</h3>
+        <p>Unify analytics storage: Parquet columnar encoding, modern Lakehouse table formats (Delta, Iceberg, Hudi), and the Medallion Architecture.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 6 — Warehouses & Lakehouses</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-06/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 7 · 5 Lessons</span>
+        <h3>Enterprise Data Architecture and Design Patterns</h3>
+        <p>Design enterprise-scale platforms: Lambda and Kappa architectures, Data Mesh domain ownership, reverse ETL, and Architecture Decision Records.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 7 — Enterprise Architecture</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-07/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 8 · 1 Lessons</span>
+        <h3>Midterm Practical: End-to-End Pipeline Review</h3>
+        <p>Integrate ingestion, storage, Spark compute, Lakehouse table formats, and governance in an intensive architectural review scenario.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 8 — Midterm Practical</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-08/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 9 · 5 Lessons</span>
+        <h3>Cloud Big Data Platforms: AWS, GCP, and Azure</h3>
+        <p>Navigate managed cloud analytics ecosystems: AWS EMR/Glue/Redshift, GCP BigQuery/Dataproc, Azure Synapse/Fabric, and cloud FinOps.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 9 — Cloud Big Data</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-09/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 10 · 5 Lessons</span>
+        <h3>DataOps, CI/CD, and Production Reliability</h3>
+        <p>Operate pipelines with software engineering rigor: dbt transformation testing, data observability, automated CI/CD, and incident response.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 10 — DataOps & Observability</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-10/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 11 · 5 Lessons</span>
+        <h3>Analytics Engineering and Business Intelligence</h3>
+        <p>Turn curated gold tables into governed semantic metrics layers, self-service BI dashboards, and executive reporting systems.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 11 — Analytics & BI</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-11/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 12 · 5 Lessons</span>
+        <h3>Machine Learning Pipelines and Feature Stores</h3>
+        <p>Scale ML workloads: feature stores (Feast), Spark MLlib distributed training, real-time/batch model serving, and data drift monitoring.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 12 — ML at Scale & MLOps</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-12/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 13 · 5 Lessons</span>
+        <h3>Data Catalogs, Lineage, and Quality Programs</h3>
+        <p>Implement enterprise governance: automated metadata catalogs (OpenMetadata, DataHub), column-level lineage, quality SLAs, and MDM.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 13 — Governance & Lineage</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-13/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 14 · 5 Lessons</span>
+        <h3>Privacy Engineering, Regulation, and Responsible AI</h3>
+        <p>Engineer compliance into data systems: PII masking, tokenization, GDPR/CCPA subject rights, retention policies, and ethical algorithmic auditing.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 14 — Privacy & Ethics</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-14/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 15 · 5 Lessons</span>
+        <h3>GenAI Data Pipelines, Vector Databases, and Future Platforms</h3>
+        <p>Master next-generation data engineering: RAG data ingestion, vector databases (Milvus, Pinecone, pgvector), data contracts, and modern career tracks.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 15 — Emerging Stacks</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-15/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Week 16 · 5 Lessons</span>
+        <h3>Capstone: Enterprise Data Platform Project &amp; Defense</h3>
+        <p>Design, document, implement, and defend a complete enterprise-grade data platform for a global multi-tenant business scenario.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">Week 16 — Capstone Project</span>
+          <a class="btn btn-primary btn-sm" href="weeks/week-16/index.html">Open Module →</a>
+        </div>
+      </article>
+    
+      </section>
+
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · MIT &amp; CC-BY-4.0 Licensed · Free for Learners Worldwide.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="assets/js/nav-data.js"></script>
+<script src="assets/js/search-index.js"></script>
+<script src="assets/js/glossary-data.js"></script>
+<script src="assets/js/interactive-tools.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

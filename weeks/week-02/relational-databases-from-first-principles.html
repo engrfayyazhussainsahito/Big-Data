@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 2.1: Relational Databases from First Principles | MS Big Data</title>
+  <meta name="description" content="Tables, ACID transactions, WAL (Write-Ahead Logging), and relational algebra form the architectural foundation beneath modern analytical warehouses.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body data-root="../../" data-page-id="week-02/lesson-2-1" data-title="Lesson 2.1: Relational Databases from First Principles">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <a href="index.html">Week 2</a>
+        <span class="separator">/</span>
+        <span>Lesson 2.1</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 2 — Storage &amp; Modeling</div>
+        <h1>Lesson 2.1: Relational Databases from First Principles</h1>
+        <p class="lead">Tables, ACID transactions, WAL (Write-Ahead Logging), and relational algebra form the architectural foundation beneath modern analytical warehouses.</p>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <strong>Estimated Reading</strong>
+            <span>70 min</span>
+          </div>
+          <div class="meta-item">
+            <strong>Difficulty</strong>
+            <span>Beginner</span>
+          </div>
+          <div class="meta-item">
+            <strong>Practice Lab</strong>
+            <span>3 hours</span>
+          </div>
+          <div class="meta-item">
+            <strong>Prerequisite</strong>
+            <span>Week 1</span>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="bookmarkBtn" class="btn">☆ Bookmark</button>
+          <button id="completeBtn" class="btn">Mark Complete</button>
+          <button id="quizModeBtn" class="btn">💡 Quiz Mode</button>
+          <button class="print-page btn">📄 Export PDF</button>
+          <button class="theme-toggle btn">🌓 Theme</button>
+        </div>
+      </header>
+      <div class="layout-article">
+        <article class="article">
+          
+      <section id="introduction">
+        <h2>1. Introduction & Theoretical Intuition</h2>
+        <p><strong>Core Principle:</strong> Tables, ACID transactions, WAL (Write-Ahead Logging), and relational algebra form the architectural foundation beneath modern analytical warehouses.</p>
+        <p>In modern enterprise architectures, <strong>Relational Databases from First Principles</strong> represents a critical engineering layer. As corporate datasets expand from gigabytes to petabytes and exabytes, single-machine abstractions break down due to immutable hardware physics: memory bus bandwidth limitations, CPU cache thrashing, disk I/O saturation, and network bisection bandwidth constraints.</p>
+        <p>Mastering this topic enables data engineers and platform architects to design scalable, fault-tolerant, cost-effective architectures capable of powering mission-critical real-time analytics, lakehouse repositories, and generative AI pipelines.</p>
+        <details class="callout warning"><summary>⚠️ Production Boundary Rule</summary><p>All lab practices in this curriculum execute exclusively against isolated sandbox datasets or local containerized clusters. Never run unapproved scraping, large extracts, or load tests against production systems without signed authorization.</p></details>
+      </section>
+
+      <section id="learning-outcomes">
+        <h2>2. Graduate Learning Outcomes</h2>
+        <p>Upon completing this lesson, you will be able to:</p>
+        <ul>
+          <li>Articulate the theoretical and physical mechanics of <strong>Relational Databases from First Principles</strong> from first principles.</li>
+          <li>Evaluate architectural trade-offs between latency, throughput, storage cost, and operational complexity.</li>
+          <li>Design and write production-grade data processing pipelines with automated error handling and testing.</li>
+          <li>Implement automated quality checks, schema evolution rules, and monitoring alerts.</li>
+          <li>Formulate formal Architecture Decision Records (ADRs) justifying technical choices to leadership.</li>
+        </ul>
+      </section>
+
+      <section id="prerequisites">
+        <h2>3. Prerequisites & Formal Boundary Conditions</h2>
+        <p>Required Background: <strong>Week 1</strong>.</p>
+        <p>Key definitions to understand before proceeding:</p>
+        <ul>
+          <li><strong>Throughput:</strong> The volume of data processed per unit of time (e.g., Megabytes/second, Events/second).</li>
+          <li><strong>Latency:</strong> The time elapsed between an event's generation and its availability in consumption layers.</li>
+          <li><strong>Idempotency:</strong> The guarantee that re-running an operation produces identical results without data duplication.</li>
+          <li><strong>Data Lineage:</strong> The complete audit trail of data origin, transformations, and downstream dependencies.</li>
+        </ul>
+      </section>
+
+      <section id="core-concepts">
+        <h2>4. Core Concepts & First-Principles Deconstruction</h2>
+        
+          <h3>4.1 The Physics of Scale: Deconstructing the 5 Vs</h3>
+          <p>The transition from classical relational databases to distributed big data platforms is governed by hardware scalability boundaries. The 5 Vs represent formal engineering trade-offs:</p>
+          <ul>
+            <li><strong>Volume:</strong> The scale of data exceeds the storage or addressable memory space of any single physical node. Solution: Horizontal partitioning (sharding) across a shared-nothing cluster.</li>
+            <li><strong>Velocity:</strong> Ingestion rates outpace single-node disk write queues and network socket buffers. Solution: Partitioned distributed commit logs (e.g. Apache Kafka) and sequential disk append mechanics.</li>
+            <li><strong>Variety:</strong> Diverse structural formats (structured relational rows, semi-structured JSON/Avro/Parquet, unstructured text/audio). Solution: Flexible schema-on-read architectures and columnar lakehouse tables.</li>
+            <li><strong>Veracity:</strong> Noise, schema drift, incomplete records, and corruptions. Solution: Declarative data contracts, continuous statistical observability, and automated quarantine landing zones.</li>
+            <li><strong>Value:</strong> The business return on data infrastructure investments, requiring low query latencies and reliable SLAs.</li>
+          </ul>
+
+          <h3>4.2 Physical Storage Layouts: Row-Oriented vs. Columnar Systems</h3>
+          <p>Traditional OLTP databases (PostgreSQL, MySQL, Oracle) utilize row-oriented <em>slotted-page</em> layouts where entire tuple attributes are stored contiguously on $8\\text{ KB}$ or $16\\text{ KB}$ disk blocks. This optimizes row inserts and point lookups ($\mathcal{O}(1)$ index scans), but incurs catastrophic I/O amplification during analytical aggregations across millions of rows.</p>
+          <p>Analytical systems (OLAP warehouses, Lakehouses) utilize <em>columnar storage</em> (e.g., Apache Parquet, Apache ORC, ClickHouse). Attributes are stored in column chunks with vectorized compression (Dictionary Encoding, Run-Length Encoding, Bit-Packing), allowing query engines to scan only the requested columns and evaluate predicate filters directly on compressed vectors (predicate pushdown).</p>
+
+          <h3>4.3 B+ Trees vs. Log-Structured Merge (LSM) Trees</h3>
+          <p>Storage engines choose between two fundamental data structures based on workload read/write profiles:</p>
+          <ul>
+            <li><strong>B+ Trees:</strong> In-place updates on disk pages. Provides $\mathcal{O}(\log_B N)$ read and write latency. Ideal for read-heavy OLTP, but suffers high write amplification and random disk I/O on large batch writes.</li>
+            <li><strong>LSM Trees:</strong> Out-of-place updates. Writes append sequentially to an in-memory <code>MemTable</code> backed by a Write-Ahead Log (WAL), then flush to immutable Sorted String Tables (SSTables) on disk. Background compaction merges SSTables. Provides $\mathcal{O}(1)$ append writes at the cost of background compaction I/O and multi-SSTable read complexity.</li>
+          </ul>
+        
+      </section>
+
+      <section id="visual-learning">
+        <h2>5. Visual Architecture & Distributed Flow Diagrams</h2>
+        <p>The following diagram models the data movement and component interactions for this module:</p>
+        <div class="diagram"><pre class="mermaid">
+flowchart LR
+  subgraph Storage_Comparison [Physical Storage Architecture]
+    subgraph Row_Oriented [Slotted-Page Row Store: OLTP]
+      R1["Block 1: [Row 1: ID, Name, Amount, Date]"]
+      R2["Block 2: [Row 2: ID, Name, Amount, Date]"]
+    end
+    subgraph Column_Oriented [Columnar Parquet Store: OLAP]
+      C1["Chunk 1: [ID_1, ID_2, ID_3, ...]"]
+      C2["Chunk 2: [Amount_1, Amount_2, ...] (Dictionary Encoded)"]
+      C3["Chunk 3: [Date_1, Date_2, ...] (RLE Compressed)"]
+    end
+  end
+  Row_Oriented -->|Full Row Read| IO1[High I/O Overhead for Aggregates]
+  Column_Oriented -->|Vectorized Column Scan| IO2[Low I/O + SIMD Acceleration]
+</pre></div>
+      </section>
+
+      <section id="mind-maps">
+        <h2>6. Mind Maps & Structural Taxonomies</h2>
+        <ul>
+          <li><strong>Infrastructure Dimensions:</strong> Compute Nodes · Network Fabric · NVMe Scratch Disks · S3 Storage Pools</li>
+          <li><strong>Operational Lifecycle:</strong> Ingestion → Schema Validation → Transformation → Quality Gate → Serving</li>
+          <li><strong>Governance Pillars:</strong> Ownership · Access Control · Lineage Tracking · SLA Monitoring · Privacy Rules</li>
+        </ul>
+      </section>
+
+      <section id="mathematical-foundations">
+        <h2>7. Mathematical & Performance Foundations</h2>
+        
+          <p><strong>Storage Compaction & Columnar Compression Math:</strong></p>
+          <p>Let a table contain $N = 100{,}000{,}000$ rows with 50 attributes, averaging $500\\text{ bytes}$ per row. Total uncompressed dataset size:</p>
+          $$S_{\\text{raw}} = 10^8 \\times 500\\text{ bytes} = 50{,}000{,}000{,}000\\text{ bytes} = 50\\text{ GB}$$
+          <p>In a row-oriented engine executing an analytical query requiring only 2 columns ($16\\text{ bytes}$ total), the engine must scan the full row width due to slotted-page layout:</p>
+          $$\\text{Row-Store I/O} = 50\\text{ GB}$$
+          <p>In a columnar Parquet layout with Snappy dictionary compression achieving a $4\\times$ compression ratio on the two selected columns ($4\\text{ bytes/row}$ effective):</p>
+          $$\\text{Columnar I/O} = 10^8 \\times 4\\text{ bytes} = 400{,}000{,}000\\text{ bytes} = 0.40\\text{ GB}$$
+          <p><strong>I/O Reduction Factor:</strong> $\\frac{50\\text{ GB}}{0.40\\text{ GB}} = 125\\times$ reduction in physical disk throughput and memory transfer bandwidth.</p>
+        
+      </section>
+
+      <section id="practical-examples">
+        <h2>8. Practical Industry Applications</h2>
+        <p><strong>Global E-Commerce:</strong> Processing millions of checkout events per second with sub-second fraud detection and nightly financial reconciliation.</p>
+        <p><strong>FinTech & Banking:</strong> High-frequency transaction auditing with immutable ledger compliance and real-time AML scoring.</p>
+        <p><strong>Connected IoT Fleets:</strong> Ingesting terabytes of sensor telemetry per hour for predictive maintenance and anomaly alerts.</p>
+      </section>
+
+      <section id="code-examples">
+        <h2>9. Production Code Examples</h2>
+        <h4>Analytical SQL Implementation</h4>
+        <pre><code class="language-sql">-- Kimball Dimensional Design: Fact and Conformed Dimension Model
+-- Fact Table: Sales Transactions (Partitioned by Date)
+CREATE TABLE fact_sales_daily (
+    sales_key BIGINT,
+    customer_key INT,
+    product_key INT,
+    store_key INT,
+    date_key INT,
+    quantity_sold INT,
+    gross_amount_usd NUMERIC(12, 2),
+    discount_amount_usd NUMERIC(12, 2),
+    net_revenue_usd NUMERIC(12, 2) GENERATED ALWAYS AS (gross_amount_usd - discount_amount_usd) STORED,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+) PARTITION BY RANGE (date_key);
+
+-- Advanced Window Function: Multi-Period Rolling Analytics
+SELECT 
+    d.calendar_month,
+    p.category_name,
+    SUM(f.net_revenue_usd) AS monthly_revenue,
+    AVG(SUM(f.net_revenue_usd)) OVER(
+        PARTITION BY p.category_name 
+        ORDER BY d.calendar_month 
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS rolling_3month_avg,
+    LAG(SUM(f.net_revenue_usd), 1) OVER(
+        PARTITION BY p.category_name 
+        ORDER BY d.calendar_month
+    ) AS prev_month_revenue,
+    ROUND(
+        ((SUM(f.net_revenue_usd) - LAG(SUM(f.net_revenue_usd), 1) OVER(PARTITION BY p.category_name ORDER BY d.calendar_month)) / 
+        NULLIF(LAG(SUM(f.net_revenue_usd), 1) OVER(PARTITION BY p.category_name ORDER BY d.calendar_month), 0)) * 100, 2
+    ) AS mom_growth_pct
+FROM fact_sales_daily f
+JOIN dim_date d ON f.date_key = d.date_key
+JOIN dim_product p ON f.product_key = p.product_key
+GROUP BY d.calendar_month, p.category_name
+ORDER BY p.category_name, d.calendar_month;</code></pre>
+        <h4>Python / Distributed Engine Pipeline</h4>
+        <pre><code class="language-python">#!/usr/bin/env python3
+"""
+Log-Structured Merge (LSM) Tree Mini-Engine:
+Demonstrating MemTable in-memory buffering, Write-Ahead Log (WAL), and immutable SSTable flushes.
+"""
+import os
+import json
+from typing import Optional, Dict
+
+class MiniLSMTree:
+    def __init__(self, memtable_threshold: int = 5, data_dir: str = "./lsm_storage"):
+        self.threshold = memtable_threshold
+        self.data_dir = data_dir
+        self.memtable: Dict[str, str] = {}
+        self.wal_path = os.path.join(data_dir, "wal.log")
+        self.sstable_count = 0
+        os.makedirs(data_dir, exist_ok=True)
+
+    def put(self, key: str, value: str) -> None:
+        # 1. Append to Write-Ahead Log (durability)
+        with open(self.wal_path, "a", encoding="utf-8") as wal:
+            wal.write(f"{json.dumps({'k': key, 'v': value})}\n")
+        
+        # 2. Insert into MemTable
+        self.memtable[key] = value
+        
+        # 3. Flush to immutable SSTable if threshold exceeded
+        if len(self.memtable) >= self.threshold:
+            self._flush_memtable()
+
+    def _flush_memtable(self) -> None:
+        self.sstable_count += 1
+        sstable_file = os.path.join(self.data_dir, f"sstable_{self.sstable_count:04d}.json")
+        sorted_entries = sorted(self.memtable.items())
+        with open(sstable_file, "w", encoding="utf-8") as f:
+            json.dump(sorted_entries, f)
+        
+        print(f"[LSM Flush] Flushed {len(self.memtable)} keys to {sstable_file}")
+        self.memtable.clear()
+        if os.path.exists(self.wal_path):
+            os.remove(self.wal_path)
+
+if __name__ == "__main__":
+    engine = MiniLSMTree(memtable_threshold=3)
+    for i in range(1, 8):
+        engine.put(f"user_session_{i}", f"payload_data_{i * 100}")</code></pre>
+      </section>
+
+      <section id="security-perspective">
+        <h2>10. Security & Threat Modeling Perspective</h2>
+        <p>Big data platforms handle sensitive organizational assets. Enforce the principle of least privilege (PoLP):</p>
+        <ul>
+          <li><strong>Encryption:</strong> Enforce AES-256 at rest (KMS customer-managed keys) and TLS 1.3 in transit.</li>
+          <li><strong>Access Governance:</strong> Implement attribute-based access control (ABAC) with automated column masking and row-level filtering.</li>
+          <li><strong>Immutability:</strong> Protect raw landing zones with write-once-read-many (WORM) object locks.</li>
+        </ul>
+      </section>
+
+      <section id="industry-perspective">
+        <h2>11. Industry Practice & Platform Engineering Realities</h2>
+        <p>In production enterprise environments, tools change rapidly but core architectural patterns persist. Top engineering organizations prioritize pipeline observability, idempotency, automated regression testing, and transparent cost allocation over shiny new vendor tools.</p>
+      </section>
+
+      <section id="research-perspective">
+        <h2>12. Academic & Research Perspective</h2>
+        <p>Key foundational research papers shaping this topic include seminal publications from ACM SIGMOD, VLDB, and IEEE ICDE on distributed query compilation, consensus protocols, and columnar lakehouse storage optimizations.</p>
+      </section>
+
+      <section id="case-studies">
+        <h2>13. Real-World Case Studies</h2>
+        <p><strong>Netflix Keystone:</strong> Real-time streaming platform routing over 500 billion events daily using Apache Kafka and Apache Flink with automated zero-downtime cluster rebalancing.</p>
+        <p><strong>Uber Michelangelo:</strong> Scalable machine learning platform managing millions of real-time features using centralized feature stores and distributed Spark training pipelines.</p>
+      </section>
+
+      <section id="misconceptions">
+        <h2>14. Common Misconceptions & Traps</h2>
+        <ul>
+          <li><em>Misconception:</em> "Big Data always requires Hadoop clusters." — <strong>Reality:</strong> Modern platforms frequently use cloud object storage, serverless compute, and Lakehouse formats (Iceberg/Delta).</li>
+          <li><em>Misconception:</em> "Real-time streaming is always superior to batch." — <strong>Reality:</strong> Streaming introduces significant state management complexity and operational cost; use batch when SLAs allow.</li>
+        </ul>
+      </section>
+
+      <section id="summary">
+        <h2>15. Summary & Key Takeaways</h2>
+        <p><strong>Relational Databases from First Principles</strong> provides the bedrock for scalable data architectures. Always prioritize data quality, idempotency, and explicit schema contracts before optimizing raw compute execution speed.</p>
+      </section>
+
+      <section id="lesson-glossary">
+        <h2>16. Module Glossary</h2>
+        <dl>
+          <dt>Scalability</dt><dd>The ability of a system to handle increased load by adding hardware resources (horizontal or vertical).</dd>
+          <dt>Data Quality SLA</dt><dd>Contractual agreement defining freshness, completeness, and error tolerances for datasets.</dd>
+          <dt>Lineage Graph</dt><dd>A directed acyclic graph mapping data dependencies from upstream sources to downstream reports.</dd>
+        </dl>
+      </section>
+
+      <section id="self-assessment">
+        <h2>17. Self-Assessment & Interactive Quiz</h2>
+        <ol class="quiz-list">
+          <li data-answer="Decoupling compute from storage allows scaling processing power independently of storage costs, preventing costly hardware over-provisioning and enabling elastic cloud scaling.">Why do modern big data platforms decouple storage from compute?</li>
+          <li data-answer="An idempotent pipeline guarantees that executing the same job multiple times produces the exact same output without duplicate records or corrupted state, which is critical for non-destructive backfills.">What is the primary benefit of designing idempotent data pipelines?</li>
+          <li data-answer="Columnar storage reads only the specific columns requested in an analytical query, drastically reducing disk I/O and enabling vectorized CPU SIMD decompression.">How does columnar storage (like Parquet) accelerate analytical aggregations?</li>
+        </ol>
+      </section>
+
+      <section id="practice-lab">
+        <h2>18. Hands-On Practice Lab & Engineering Drill</h2>
+        
+          <p><strong>Lab Objective:</strong> Construct a complete Kimball Star Schema analytical database in SQLite/DuckDB, generate synthetic dimensional records, and execute high-performance analytical window queries comparing execution plan costs.</p>
+
+          <h4>Step 1: Star Schema Database Initialization</h4>
+          <pre><code class="language-sql">-- schema.sql: Initialize Dimension & Fact Tables
+CREATE TABLE dim_customer (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT,
+    tier TEXT,
+    country TEXT
+);
+
+CREATE TABLE dim_product (
+    product_id INTEGER PRIMARY KEY,
+    product_name TEXT,
+    category TEXT,
+    unit_cost REAL
+);
+
+CREATE TABLE fact_orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER,
+    product_id INTEGER,
+    order_date TEXT,
+    quantity INTEGER,
+    total_amount REAL,
+    FOREIGN KEY(customer_id) REFERENCES dim_customer(customer_id),
+    FOREIGN KEY(product_id) REFERENCES dim_product(product_id)
+);</code></pre>
+
+          <h4>Step 2: Synthetic Data Insertion & Benchmark Script</h4>
+          <pre><code class="language-python">import sqlite3, random
+from datetime import datetime, timedelta
+
+conn = sqlite3.connect("star_schema_lab.db")
+cur = conn.cursor()
+
+with open("schema.sql") as f:
+    cur.executescript(f.read())
+
+# Seed Dimensions
+customers = [(i, f"Customer_{i}", random.choice(["Gold", "Silver", "Bronze"]), random.choice(["US", "CA", "UK", "DE"])) for i in range(1, 501)]
+cur.executemany("INSERT INTO dim_customer VALUES (?, ?, ?, ?)", customers)
+
+products = [(i, f"Product_{i}", random.choice(["Electronics", "Home", "Apparel", "Books"]), round(random.uniform(10, 500), 2)) for i in range(1, 101)]
+cur.executemany("INSERT INTO dim_product VALUES (?, ?, ?, ?)", products)
+
+# Seed 50,000 Facts
+base_date = datetime(2026, 1, 1)
+facts = []
+for i in range(1, 50001):
+    c_id = random.randint(1, 500)
+    p_id = random.randint(1, 100)
+    dt = (base_date + timedelta(days=random.randint(0, 200))).strftime("%Y-%m-%d")
+    qty = random.randint(1, 10)
+    cost = products[p_id - 1][3]
+    facts.append((i, c_id, p_id, dt, qty, round(qty * cost * 1.2, 2)))
+
+cur.executemany("INSERT INTO fact_orders VALUES (?, ?, ?, ?, ?, ?)", facts)
+conn.commit()
+print("Populated Star Schema with 50,000 fact rows.")
+conn.close()</code></pre>
+
+          <h4>Step 3: Analytical Window Query Execution & Plan Inspection</h4>
+          <pre><code class="language-python">import sqlite3
+
+conn = sqlite3.connect("star_schema_lab.db")
+cur = conn.cursor()
+
+query = \"\"\"
+EXPLAIN QUERY PLAN
+SELECT 
+    p.category,
+    c.country,
+    COUNT(*) AS total_orders,
+    SUM(f.total_amount) AS revenue,
+    DENSE_RANK() OVER (PARTITION BY c.country ORDER BY SUM(f.total_amount) DESC) AS rank_in_country
+FROM fact_orders f
+JOIN dim_product p ON f.product_id = p.product_id
+JOIN dim_customer c ON f.customer_id = c.customer_id
+GROUP BY p.category, c.country;
+\"\"\"
+for row in cur.execute(query):
+    print(row)
+conn.close()</code></pre>
+
+          <h4>Step 4: Graduate Extension Challenge</h4>
+          <p>Implement an index on <code>(product_id, customer_id)</code> in <code>fact_orders</code> and quantify the difference in B-Tree index scan pages versus full table scan pages using <code>EXPLAIN QUERY PLAN</code>.</p>
+        
+      </section>
+
+      <section id="further-reading">
+        <h2>19. Further Reading & Citations</h2>
+        <ul>
+          <li><em>Designing Data-Intensive Applications</em> — Martin Kleppmann (O'Reilly)</li>
+          <li><em>Fundamentals of Data Engineering</em> — Joe Reis &amp; Matt Housley (O'Reilly)</li>
+          <li>Official documentation for Apache Spark, Apache Kafka, Apache Iceberg, and dbt.</li>
+        </ul>
+      </section>
+
+      <div class="prev-next"><a class="btn" href="data-governance-and-privacy-fundamentals.html">← Data Governance and Privacy Fundamenta</a><a class="btn btn-primary" href="data-modeling-normalization-and-dimensional-design.html">Data Modeling: Normalization vs Dimens →</a></div>
+    
+        </article>
+        <aside class="toc">
+          <h2>On This Page</h2>
+          <ol id="tocList"></ol>
+        </aside>
+      </div>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Designed for Graduate Rigor &amp; Professional Mastery.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

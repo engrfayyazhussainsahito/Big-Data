@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 4.2: Batch Ingestion Patterns and Landing Zones | MS Big Data</title>
+  <meta name="description" content="Full table snapshots, incremental watermark extractors, chunked multipart uploads, and partitioned landing bucket topologies.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body data-root="../../" data-page-id="week-04/lesson-4-2" data-title="Lesson 4.2: Batch Ingestion Patterns and Landing Zones">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <a href="index.html">Week 4</a>
+        <span class="separator">/</span>
+        <span>Lesson 4.2</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 4 — Ingestion &amp; ETL/ELT</div>
+        <h1>Lesson 4.2: Batch Ingestion Patterns and Landing Zones</h1>
+        <p class="lead">Full table snapshots, incremental watermark extractors, chunked multipart uploads, and partitioned landing bucket topologies.</p>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <strong>Estimated Reading</strong>
+            <span>75 min</span>
+          </div>
+          <div class="meta-item">
+            <strong>Difficulty</strong>
+            <span>Intermediate</span>
+          </div>
+          <div class="meta-item">
+            <strong>Practice Lab</strong>
+            <span>3 hours</span>
+          </div>
+          <div class="meta-item">
+            <strong>Prerequisite</strong>
+            <span>Lesson 4.1</span>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="bookmarkBtn" class="btn">☆ Bookmark</button>
+          <button id="completeBtn" class="btn">Mark Complete</button>
+          <button id="quizModeBtn" class="btn">💡 Quiz Mode</button>
+          <button class="print-page btn">📄 Export PDF</button>
+          <button class="theme-toggle btn">🌓 Theme</button>
+        </div>
+      </header>
+      <div class="layout-article">
+        <article class="article">
+          
+      <section id="introduction">
+        <h2>1. Introduction & Theoretical Intuition</h2>
+        <p><strong>Core Principle:</strong> Full table snapshots, incremental watermark extractors, chunked multipart uploads, and partitioned landing bucket topologies.</p>
+        <p>In modern enterprise architectures, <strong>Batch Ingestion Patterns and Landing Zones</strong> represents a critical engineering layer. As corporate datasets expand from gigabytes to petabytes and exabytes, single-machine abstractions break down due to immutable hardware physics: memory bus bandwidth limitations, CPU cache thrashing, disk I/O saturation, and network bisection bandwidth constraints.</p>
+        <p>Mastering this topic enables data engineers and platform architects to design scalable, fault-tolerant, cost-effective architectures capable of powering mission-critical real-time analytics, lakehouse repositories, and generative AI pipelines.</p>
+        <details class="callout warning"><summary>⚠️ Production Boundary Rule</summary><p>All lab practices in this curriculum execute exclusively against isolated sandbox datasets or local containerized clusters. Never run unapproved scraping, large extracts, or load tests against production systems without signed authorization.</p></details>
+      </section>
+
+      <section id="learning-outcomes">
+        <h2>2. Graduate Learning Outcomes</h2>
+        <p>Upon completing this lesson, you will be able to:</p>
+        <ul>
+          <li>Articulate the theoretical and physical mechanics of <strong>Batch Ingestion Patterns and Landing Zones</strong> from first principles.</li>
+          <li>Evaluate architectural trade-offs between latency, throughput, storage cost, and operational complexity.</li>
+          <li>Design and write production-grade data processing pipelines with automated error handling and testing.</li>
+          <li>Implement automated quality checks, schema evolution rules, and monitoring alerts.</li>
+          <li>Formulate formal Architecture Decision Records (ADRs) justifying technical choices to leadership.</li>
+        </ul>
+      </section>
+
+      <section id="prerequisites">
+        <h2>3. Prerequisites & Formal Boundary Conditions</h2>
+        <p>Required Background: <strong>Lesson 4.1</strong>.</p>
+        <p>Key definitions to understand before proceeding:</p>
+        <ul>
+          <li><strong>Throughput:</strong> The volume of data processed per unit of time (e.g., Megabytes/second, Events/second).</li>
+          <li><strong>Latency:</strong> The time elapsed between an event's generation and its availability in consumption layers.</li>
+          <li><strong>Idempotency:</strong> The guarantee that re-running an operation produces identical results without data duplication.</li>
+          <li><strong>Data Lineage:</strong> The complete audit trail of data origin, transformations, and downstream dependencies.</li>
+        </ul>
+      </section>
+
+      <section id="core-concepts">
+        <h2>4. Core Concepts & First-Principles Deconstruction</h2>
+        
+          <h3>4.1 Distributed Consensus and the Physics of Cluster Networks</h3>
+          <p>When computation spans dozens or hundreds of independent physical nodes, the network becomes an unreliable, asynchronous communication medium. The fundamental theorems of distributed systems dictate architecture:</p>
+          <ul>
+            <li><strong>CAP Theorem (Brewer, Gilbert & Lynch):</strong> Under network partition ($P$), a distributed system can guarantee Consistency ($C$ - linearizability) or Availability ($A$ - every non-failing node returns a non-error response), but fundamentally cannot guarantee both.</li>
+            <li><strong>FLP Impossibility (Fischer, Lynch, Paterson):</strong> In an asynchronous network, no deterministic consensus protocol can guarantee liveness in the presence of even a single unannounced process crash.</li>
+            <li><strong>Raft & Paxos Consensus:</strong> State machine replication protocols electing a cluster leader via quorums ($\\lfloor N/2 \\rfloor + 1$) and log replication terms.</li>
+          </ul>
+
+          <h3>4.2 Spark Internal Engine: RDDs, Catalyst, and Tungsten</h3>
+          <p>Apache Spark revolutionized distributed data processing by decoupling storage from computation and introducing in-memory Directed Acyclic Graph (DAG) lineages:</p>
+          <ol>
+            <li><strong>Resilient Distributed Datasets (RDDs):</strong> Read-only, lazily evaluated, partitioned collections. Lineages record transformation history, allowing automatic partition recomputation on worker hardware failure without checkpointing to disk.</li>
+            <li><strong>Narrow vs. Wide Dependencies:</strong> <em>Narrow dependencies</em> (e.g. <code>map</code>, <code>filter</code>) allow pipelined execution within a single JVM without network I/O. <em>Wide dependencies</em> (e.g. <code>groupByKey</code>, <code>join</code>) require a cluster-wide <strong>Shuffle</strong>, materializing intermediate data to local scratch disks and causing network serialization bottlenecks.</li>
+            <li><strong>Catalyst Optimizer:</strong> An extensible query optimization framework written in Scala using pattern matching and tree transformations. It applies rule-based optimizations (constant folding, predicate pushdown, projection pruning) followed by cost-based optimizations (join reordering based on broadcast thresholds).</li>
+            <li><strong>Project Tungsten:</strong> Bypasses JVM garbage collection overhead by managing memory explicitly in Off-Heap binary buffers (`sun.misc.Unsafe`), packing columnar attributes into contiguous 64-bit words for CPU L1/L2 cache locality, and emitting whole-stage Java bytecode at runtime.</li>
+          </ol>
+
+          <h3>4.3 Change Data Capture (CDC) Protocols and Transaction Logs</h3>
+          <p>Rather than executing costly, locking periodic batch queries (<code>SELECT * FROM table WHERE updated_at > ?</code>), modern architectures leverage Change Data Capture (CDC) engines like Debezium. CDC tails the database engine's native Write-Ahead Log (WAL in PostgreSQL, binary log in MySQL), parsing serialized mutation events with low latency and streaming them into distributed message logs (Kafka) with zero query load on operational databases.</p>
+        
+      </section>
+
+      <section id="visual-learning">
+        <h2>5. Visual Architecture & Distributed Flow Diagrams</h2>
+        <p>The following diagram models the data movement and component interactions for this module:</p>
+        <div class="diagram"><pre class="mermaid">
+flowchart TB
+  subgraph Spark_Driver [Spark Driver & Catalyst Engine]
+    Logical[Unresolved Logical Plan] --> Catalog[(Schema Catalog)]
+    Catalog --> Resolved[Resolved Logical Plan]
+    Resolved --> Optimizer[Catalyst Rule-Based & Cost Optimizer]
+    Optimizer --> Physical[Physical Plan Generation]
+    Physical --> WholeStage[Tungsten Whole-Stage Bytecode Codegen]
+  end
+  subgraph Cluster_Execution [Distributed Worker Tasks]
+    WholeStage --> E1[Executor 1: Partition Tasks]
+    WholeStage --> E2[Executor 2: Partition Tasks]
+    WholeStage --> E3[Executor 3: Partition Tasks]
+  end
+</pre></div>
+      </section>
+
+      <section id="mind-maps">
+        <h2>6. Mind Maps & Structural Taxonomies</h2>
+        <ul>
+          <li><strong>Infrastructure Dimensions:</strong> Compute Nodes · Network Fabric · NVMe Scratch Disks · S3 Storage Pools</li>
+          <li><strong>Operational Lifecycle:</strong> Ingestion → Schema Validation → Transformation → Quality Gate → Serving</li>
+          <li><strong>Governance Pillars:</strong> Ownership · Access Control · Lineage Tracking · SLA Monitoring · Privacy Rules</li>
+        </ul>
+      </section>
+
+      <section id="mathematical-foundations">
+        <h2>7. Mathematical & Performance Foundations</h2>
+        
+          <p><strong>Spark Shuffle Complexity & Memory Sizing Formulas:</strong></p>
+          <p>Let a Spark cluster contain $M$ Mapper tasks producing output partitioned for $R$ Reducer tasks. Total intermediate shuffle files materialized to worker scratch NVMe drives:</p>
+          $$\\text{Total Shuffle Spill Files} = M \\times R$$
+          <p>If $M = 5{,}000$ and $R = 2{,}000$, unoptimized Hash Shuffle creates $10{,}000{,}000$ small disk files, exhausting OS file descriptors and saturating disk head seeks. Modern <code>SortShuffleManager</code> merges output into a single indexed data file per map task ($M$ data files + $M$ index files).</p>
+          <p><strong>Spark Executor Memory Allocation Formula:</strong></p>
+          $$\\text{Total Pod/JVM Memory} = \\text{Executor Memory} + \\max(384\\text{ MB}, 0.10 \\times \\text{Executor Memory}) + \\text{PySpark Overhead}$$
+          <p>Within the JVM, Spark splits memory into Execution ($60\\%$) and Storage ($40\\%$):</p>
+          $$\\text{Usable Execution Pool} = (\\text{Heap} - 300\\text{ MB}) \\times 0.60 \\times 0.50$$
+        
+      </section>
+
+      <section id="practical-examples">
+        <h2>8. Practical Industry Applications</h2>
+        <p><strong>Global E-Commerce:</strong> Processing millions of checkout events per second with sub-second fraud detection and nightly financial reconciliation.</p>
+        <p><strong>FinTech & Banking:</strong> High-frequency transaction auditing with immutable ledger compliance and real-time AML scoring.</p>
+        <p><strong>Connected IoT Fleets:</strong> Ingesting terabytes of sensor telemetry per hour for predictive maintenance and anomaly alerts.</p>
+      </section>
+
+      <section id="code-examples">
+        <h2>9. Production Code Examples</h2>
+        <h4>Analytical SQL Implementation</h4>
+        <pre><code class="language-sql">-- CDC Mutation Event Replay & Slowly Changing Dimensions (SCD Type 2)
+WITH ranked_cdc_mutations AS (
+    SELECT 
+        customer_id,
+        first_name,
+        last_name,
+        email,
+        address,
+        mutation_type, -- 'INSERT', 'UPDATE', 'DELETE'
+        op_timestamp,
+        LEAD(op_timestamp) OVER(PARTITION BY customer_id ORDER BY op_timestamp) AS next_change_timestamp
+    FROM cdc_postgres_customer_stream
+)
+SELECT 
+    customer_id,
+    first_name,
+    last_name,
+    email,
+    address,
+    op_timestamp AS effective_from_timestamp,
+    COALESCE(next_change_timestamp, '9999-12-31 23:59:59'::TIMESTAMP) AS effective_to_timestamp,
+    CASE WHEN next_change_timestamp IS NULL THEN TRUE ELSE FALSE END AS is_current_record
+FROM ranked_cdc_mutations
+WHERE mutation_type != 'DELETE';</code></pre>
+        <h4>Python / Distributed Engine Pipeline</h4>
+        <pre><code class="language-python">#!/usr/bin/env python3
+"""
+Production PySpark Catalyst Optimization & Salted Join Implementation:
+Mitigating catastrophic data skew in distributed distributed hash joins.
+"""
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, concat, lit, rand, floor, broadcast
+
+spark = SparkSession.builder \
+    .appName("OptimizedDistributedJoin") \
+    .config("spark.sql.shuffle.partitions", "200") \
+    .config("spark.sql.autoBroadcastJoinThreshold", "67108864") \
+    .getOrCreate()
+
+def execute_skew_mitigated_join(large_skewed_df, dimension_df, skew_factor: int = 8):
+    """
+    Applies salting to skewed join keys to distribute hot partitions evenly across workers.
+    """
+    # 1. Salt the skewed large DataFrame key with a random integer [0, skew_factor - 1]
+    salted_large = large_skewed_df.withColumn(
+        "salted_key", 
+        concat(col("customer_id"), lit("_"), floor(rand() * skew_factor))
+    )
+    
+    # 2. Explode the dimension DataFrame key across all possible salt values
+    salt_numbers = spark.range(0, skew_factor).withColumnRenamed("id", "salt_id")
+    exploded_dim = dimension_df.crossJoin(broadcast(salt_numbers)) \
+        .withColumn("salted_key", concat(col("customer_id"), lit("_"), col("salt_id")))
+    
+    # 3. Perform distributed equijoin on the salted key
+    joined_df = salted_large.join(exploded_dim, on="salted_key", how="inner") \
+        .drop("salted_key", "salt_id")
+    
+    return joined_df
+
+if __name__ == "__main__":
+    print("Spark Catalyst Salting Module compiled successfully.")</code></pre>
+      </section>
+
+      <section id="security-perspective">
+        <h2>10. Security & Threat Modeling Perspective</h2>
+        <p>Big data platforms handle sensitive organizational assets. Enforce the principle of least privilege (PoLP):</p>
+        <ul>
+          <li><strong>Encryption:</strong> Enforce AES-256 at rest (KMS customer-managed keys) and TLS 1.3 in transit.</li>
+          <li><strong>Access Governance:</strong> Implement attribute-based access control (ABAC) with automated column masking and row-level filtering.</li>
+          <li><strong>Immutability:</strong> Protect raw landing zones with write-once-read-many (WORM) object locks.</li>
+        </ul>
+      </section>
+
+      <section id="industry-perspective">
+        <h2>11. Industry Practice & Platform Engineering Realities</h2>
+        <p>In production enterprise environments, tools change rapidly but core architectural patterns persist. Top engineering organizations prioritize pipeline observability, idempotency, automated regression testing, and transparent cost allocation over shiny new vendor tools.</p>
+      </section>
+
+      <section id="research-perspective">
+        <h2>12. Academic & Research Perspective</h2>
+        <p>Key foundational research papers shaping this topic include seminal publications from ACM SIGMOD, VLDB, and IEEE ICDE on distributed query compilation, consensus protocols, and columnar lakehouse storage optimizations.</p>
+      </section>
+
+      <section id="case-studies">
+        <h2>13. Real-World Case Studies</h2>
+        <p><strong>Netflix Keystone:</strong> Real-time streaming platform routing over 500 billion events daily using Apache Kafka and Apache Flink with automated zero-downtime cluster rebalancing.</p>
+        <p><strong>Uber Michelangelo:</strong> Scalable machine learning platform managing millions of real-time features using centralized feature stores and distributed Spark training pipelines.</p>
+      </section>
+
+      <section id="misconceptions">
+        <h2>14. Common Misconceptions & Traps</h2>
+        <ul>
+          <li><em>Misconception:</em> "Big Data always requires Hadoop clusters." — <strong>Reality:</strong> Modern platforms frequently use cloud object storage, serverless compute, and Lakehouse formats (Iceberg/Delta).</li>
+          <li><em>Misconception:</em> "Real-time streaming is always superior to batch." — <strong>Reality:</strong> Streaming introduces significant state management complexity and operational cost; use batch when SLAs allow.</li>
+        </ul>
+      </section>
+
+      <section id="summary">
+        <h2>15. Summary & Key Takeaways</h2>
+        <p><strong>Batch Ingestion Patterns and Landing Zones</strong> provides the bedrock for scalable data architectures. Always prioritize data quality, idempotency, and explicit schema contracts before optimizing raw compute execution speed.</p>
+      </section>
+
+      <section id="lesson-glossary">
+        <h2>16. Module Glossary</h2>
+        <dl>
+          <dt>Scalability</dt><dd>The ability of a system to handle increased load by adding hardware resources (horizontal or vertical).</dd>
+          <dt>Data Quality SLA</dt><dd>Contractual agreement defining freshness, completeness, and error tolerances for datasets.</dd>
+          <dt>Lineage Graph</dt><dd>A directed acyclic graph mapping data dependencies from upstream sources to downstream reports.</dd>
+        </dl>
+      </section>
+
+      <section id="self-assessment">
+        <h2>17. Self-Assessment & Interactive Quiz</h2>
+        <ol class="quiz-list">
+          <li data-answer="Decoupling compute from storage allows scaling processing power independently of storage costs, preventing costly hardware over-provisioning and enabling elastic cloud scaling.">Why do modern big data platforms decouple storage from compute?</li>
+          <li data-answer="An idempotent pipeline guarantees that executing the same job multiple times produces the exact same output without duplicate records or corrupted state, which is critical for non-destructive backfills.">What is the primary benefit of designing idempotent data pipelines?</li>
+          <li data-answer="Columnar storage reads only the specific columns requested in an analytical query, drastically reducing disk I/O and enabling vectorized CPU SIMD decompression.">How does columnar storage (like Parquet) accelerate analytical aggregations?</li>
+        </ol>
+      </section>
+
+      <section id="practice-lab">
+        <h2>18. Hands-On Practice Lab & Engineering Drill</h2>
+        
+          <p><strong>Lab Objective:</strong> Simulate an Apache Spark distributed job, construct RDD lineage graphs, inspect Catalyst physical execution plans, and implement a key-salting join to eliminate data skew execution bottlenecks.</p>
+
+          <h4>Step 1: Synthetic Skewed Dataset Creation</h4>
+          <pre><code class="language-python"># create_skewed_data.py
+import pandas as pd
+import numpy as np
+
+# 90% of transactions belong to a single "whale" merchant (Merchant 999)
+n_rows = 200000
+merchant_ids = [999] * int(n_rows * 0.9) + list(np.random.randint(1, 500, size=int(n_rows * 0.1)))
+np.random.shuffle(merchant_ids)
+
+df_tx = pd.DataFrame({
+    "tx_id": range(1, n_rows + 1),
+    "merchant_id": merchant_ids,
+    "amount": np.random.uniform(5.0, 500.0, size=n_rows)
+})
+df_tx.to_parquet("skewed_transactions.parquet")
+
+df_merchants = pd.DataFrame({
+    "merchant_id": range(1, 1000),
+    "merchant_name": [f"Merchant_{i}" for i in range(1, 1000)],
+    "category": np.random.choice(["Retail", "Food", "Services"], size=999)
+})
+df_merchants.to_parquet("dim_merchants.parquet")
+print("Saved skewed_transactions.parquet and dim_merchants.parquet.")</code></pre>
+
+          <h4>Step 2: PySpark Catalyst Optimization & Skew Resolution</h4>
+          <pre><code class="language-python"># run_spark_benchmark.py
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, concat, lit, rand, floor, broadcast
+import time
+
+spark = SparkSession.builder \\
+    .appName("SkewDrill") \\
+    .master("local[4]") \\
+    .config("spark.sql.shuffle.partitions", "8") \\
+    .getOrCreate()
+
+tx_df = spark.read.parquet("skewed_transactions.parquet")
+merchants_df = spark.read.parquet("dim_merchants.parquet")
+
+print("--- Standard Join Execution Plan ---")
+standard_join = tx_df.join(merchants_df, on="merchant_id")
+standard_join.explain(True)
+
+t0 = time.time()
+print(f"Standard Join Count: {standard_join.count()} in {time.time() - t0:.2f}s")
+
+print("\\n--- Skew-Mitigated Salted Join ---")
+salted_tx = tx_df.withColumn("salt", floor(rand() * 4)) \\
+                 .withColumn("salted_key", concat(col("merchant_id"), lit("_"), col("salt")))
+
+salt_df = spark.range(0, 4).withColumnRenamed("id", "salt")
+exploded_merchants = merchants_df.crossJoin(broadcast(salt_df)) \\
+    .withColumn("salted_key", concat(col("merchant_id"), lit("_"), col("salt")))
+
+salted_join = salted_tx.join(exploded_merchants, on="salted_key")
+t1 = time.time()
+print(f"Salted Join Count: {salted_join.count()} in {time.time() - t1:.2f}s")
+spark.stop()</code></pre>
+
+          <h4>Step 3: Verification & Execution Analysis</h4>
+          <p>Run the PySpark benchmark:</p>
+          <pre><code class="language-bash">python create_skewed_data.py
+python run_spark_benchmark.py</code></pre>
+          <p>Inspect the Spark physical plan output, observing how <code>BroadcastExchange</code> and <code>SortMergeJoin</code> operator nodes are scheduled across worker threads.</p>
+
+          <h4>Step 4: Graduate Extension Challenge</h4>
+          <p>Using PySpark's DataFrame API, trigger a dynamic partition pruning (DPP) execution by adding a selective filter on <code>dim_merchants.category == 'Food'</code> and analyze the reduction in scanned parquet partitions via <code>explain(mode="formatted")</code>.</p>
+        
+      </section>
+
+      <section id="further-reading">
+        <h2>19. Further Reading & Citations</h2>
+        <ul>
+          <li><em>Designing Data-Intensive Applications</em> — Martin Kleppmann (O'Reilly)</li>
+          <li><em>Fundamentals of Data Engineering</em> — Joe Reis &amp; Matt Housley (O'Reilly)</li>
+          <li>Official documentation for Apache Spark, Apache Kafka, Apache Iceberg, and dbt.</li>
+        </ul>
+      </section>
+
+      <div class="prev-next"><a class="btn" href="etl-elt-from-first-principles.html">← ETL vs ELT from First Principles</a><a class="btn btn-primary" href="change-data-capture-and-incremental-loads.html">Change Data Capture (CDC) and Incremen →</a></div>
+    
+        </article>
+        <aside class="toc">
+          <h2>On This Page</h2>
+          <ol id="tocList"></ol>
+        </aside>
+      </div>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Designed for Graduate Rigor &amp; Professional Mastery.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

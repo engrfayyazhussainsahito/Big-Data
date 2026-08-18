@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 15: GenAI Data Pipelines, Vector Databases, and Future Platforms | MS Big Data</title>
+  <meta name="description" content="Master next-generation data engineering: RAG data ingestion, vector databases (Milvus, Pinecone, pgvector), data contracts, and modern career tracks.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body data-root="../../" data-page-id="week-15" data-title="Week 15: GenAI Data Pipelines, Vector Databases, and Future Platforms">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Week 15 Overview</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 15 — Emerging Stacks</div>
+        <h1>Week 15: GenAI Data Pipelines, Vector Databases, and Future Platforms</h1>
+        <p class="lead">Master next-generation data engineering: RAG data ingestion, vector databases (Milvus, Pinecone, pgvector), data contracts, and modern career tracks.</p>
+      </header>
+      <section style="margin-bottom: 2.5rem;">
+        <h2>Week Learning Objectives</h2>
+        <ul style="margin-top: 1rem; line-height: 1.8; color: var(--text-secondary);">
+          <li>Build scalable data ingestion pipelines for Retrieval-Augmented Generation (RAG).</li><li>Perform high-dimensional embedding extraction, chunking, and vector index management.</li><li>Compare vector storage architectures: HNSW, IVFFlat, pgvector, Pinecone, Milvus, Qdrant.</li><li>Implement bidirectional Data Contracts between software product teams and data engineering.</li><li>Evaluate future platform paradigms (Lakehouse 3.0, composable engines) and data career roadmaps.</li>
+        </ul>
+      </section>
+      <h2>Lessons in this Module</h2>
+      <section class="grid">
+        
+      <article class="card week-card">
+        <span class="week-num">Lesson 15.1 · Advanced</span>
+        <h3>GenAI Data Pipelines and RAG Architecture</h3>
+        <p>Feeding LLMs reliable enterprise context: unstructured document ingestion, semantic chunking strategies, embedding generation, and metadata enrichment.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 80 min</span>
+          <a class="btn btn-primary btn-sm" href="genai-data-pipelines-and-rag-architecture.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 15.2 · Advanced</span>
+        <h3>Vector Databases and Semantic Similarity Search</h3>
+        <p>High-dimensional vector indexing: Hierarchical Navigable Small World (HNSW), cosine similarity, product quantization, and hybrid keyword-vector search.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="vector-databases-and-semantic-search.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 15.3 · Advanced</span>
+        <h3>Data Contracts and Producer-Consumer Interfaces</h3>
+        <p>Preventing upstream schema breaks: defining enforceable JSON/YAML contracts with CI/CD validation gates between backend developers and data teams.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="data-contracts-and-domain-data-products.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 15.4 · Advanced</span>
+        <h3>Real-Time Feature Serving and Online AI Pipelines</h3>
+        <p>Streaming feature engineering, WebSocket push updates, real-time embeddings, and sub-10ms inference caching.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="real-time-feature-serving-for-ml.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 15.5 · Intermediate</span>
+        <h3>The Future of Data Platforms and Career Roadmaps</h3>
+        <p>Decoupled query engines (Apache Arrow, DuckDB, Polars), Rust-powered data tooling, and career pathways from Data Engineer to Principal Data Architect.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 65 min</span>
+          <a class="btn btn-primary btn-sm" href="future-of-data-platforms-and-career-paths.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      </section>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Modeled for Graduate Rigor.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

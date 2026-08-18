@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 4: Batch Ingestion, ETL/ELT, and Orchestration | MS Big Data</title>
+  <meta name="description" content="Move data reliably across boundary zones: full/incremental loads, Change Data Capture (CDC), data contracts, schema evolution, and Airflow DAGs.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body data-root="../../" data-page-id="week-04" data-title="Week 4: Batch Ingestion, ETL/ELT, and Orchestration">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Week 4 Overview</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 4 — Ingestion &amp; ETL/ELT</div>
+        <h1>Week 4: Batch Ingestion, ETL/ELT, and Orchestration</h1>
+        <p class="lead">Move data reliably across boundary zones: full/incremental loads, Change Data Capture (CDC), data contracts, schema evolution, and Airflow DAGs.</p>
+      </header>
+      <section style="margin-bottom: 2.5rem;">
+        <h2>Week Learning Objectives</h2>
+        <ul style="margin-top: 1rem; line-height: 1.8; color: var(--text-secondary);">
+          <li>Contrast classic ETL architectures against modern ELT warehouse patterns.</li><li>Design file-based ingestion landing zones and high-throughput batch loaders.</li><li>Implement Change Data Capture (CDC) with WAL readers and Debezium.</li><li>Enforce data validation contracts and manage backward-compatible schema drift.</li><li>Author robust workflow orchestration DAGs using Apache Airflow and Dagster.</li>
+        </ul>
+      </section>
+      <h2>Lessons in this Module</h2>
+      <section class="grid">
+        
+      <article class="card week-card">
+        <span class="week-num">Lesson 4.1 · Intermediate</span>
+        <h3>ETL vs ELT from First Principles</h3>
+        <p>Transform before load vs load raw and transform in-engine: analyze compute efficiency, storage economics, and transformation elasticity.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="etl-elt-from-first-principles.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 4.2 · Intermediate</span>
+        <h3>Batch Ingestion Patterns and Landing Zones</h3>
+        <p>Full table snapshots, incremental watermark extractors, chunked multipart uploads, and partitioned landing bucket topologies.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="batch-ingestion-patterns.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 4.3 · Intermediate</span>
+        <h3>Change Data Capture (CDC) and Incremental Loads</h3>
+        <p>Capture database mutations without querying tables using database transaction logs, Debezium connectors, and append-only event streams.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 80 min</span>
+          <a class="btn btn-primary btn-sm" href="change-data-capture-and-incremental-loads.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 4.4 · Intermediate</span>
+        <h3>Data Validation and Schema Evolution</h3>
+        <p>Data contracts, schema registries (Avro, Protobuf), and Great Expectations validation rules to prevent silent pipeline corruption.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="data-validation-and-schema-evolution.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 4.5 · Intermediate</span>
+        <h3>Orchestration with Airflow and Dagster</h3>
+        <p>Dependency graphs, retry policies, backfilling, idempotency, dynamic task mapping, and asset-based orchestration.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 80 min</span>
+          <a class="btn btn-primary btn-sm" href="orchestration-with-airflow-and-dagster.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      </section>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Modeled for Graduate Rigor.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

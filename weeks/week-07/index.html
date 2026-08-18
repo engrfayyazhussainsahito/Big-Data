@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 7: Enterprise Data Architecture and Design Patterns | MS Big Data</title>
+  <meta name="description" content="Design enterprise-scale platforms: Lambda and Kappa architectures, Data Mesh domain ownership, reverse ETL, and Architecture Decision Records.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body data-root="../../" data-page-id="week-07" data-title="Week 7: Enterprise Data Architecture and Design Patterns">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Week 7 Overview</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 7 — Enterprise Architecture</div>
+        <h1>Week 7: Enterprise Data Architecture and Design Patterns</h1>
+        <p class="lead">Design enterprise-scale platforms: Lambda and Kappa architectures, Data Mesh domain ownership, reverse ETL, and Architecture Decision Records.</p>
+      </header>
+      <section style="margin-bottom: 2.5rem;">
+        <h2>Week Learning Objectives</h2>
+        <ul style="margin-top: 1rem; line-height: 1.8; color: var(--text-secondary);">
+          <li>Architect end-to-end multi-tenant data platforms with clear domain boundaries.</li><li>Compare Lambda Architecture dual-layers against Kappa single-stream platforms.</li><li>Apply Data Mesh principles: domain-oriented decentralized ownership and federated governance.</li><li>Implement serving layers, low-latency analytics APIs, and Reverse ETL syncing.</li><li>Document architectural trade-offs using Architecture Decision Records (ADRs).</li>
+        </ul>
+      </section>
+      <h2>Lessons in this Module</h2>
+      <section class="grid">
+        
+      <article class="card week-card">
+        <span class="week-num">Lesson 7.1 · Advanced</span>
+        <h3>Enterprise Data Architecture from First Principles</h3>
+        <p>Aligning data platforms with business topology: ingest zones, compute engines, semantic layers, and consumer interfaces.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="enterprise-data-architecture-from-first-principles.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 7.2 · Advanced</span>
+        <h3>Lambda, Kappa, and Unified Stream-Batch Architectures</h3>
+        <p>Dual-layer batch + speed systems (Lambda) vs single log-centric stream architectures (Kappa) vs modern lakehouse unified streaming.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="lambda-kappa-and-unified-stream-batch.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 7.3 · Advanced</span>
+        <h3>Data Mesh and Domain-Oriented Data Products</h3>
+        <p>Breaking monolithic data engineering bottlenecks: domain data products, self-serve data infrastructure, and federated computational governance.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="data-mesh-and-domain-oriented-ownership.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 7.4 · Intermediate</span>
+        <h3>Serving Layers, Fast Analytics APIs, and Reverse ETL</h3>
+        <p>Closing the loop: serving low-latency queries via ClickHouse/Trino, REST/GraphQL endpoints, and syncing warehouse metrics back to operational CRMs.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 65 min</span>
+          <a class="btn btn-primary btn-sm" href="serving-layers-apis-and-reverse-etl.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 7.5 · Intermediate</span>
+        <h3>Architecture Decision Records (ADRs) and Platform Blueprints</h3>
+        <p>Writing formal ADRs (Context, Decision, Consequences) to justify storage formats, orchestrators, and migration strategies.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 60 min</span>
+          <a class="btn btn-primary btn-sm" href="architecture-decision-records-and-documentation.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      </section>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Modeled for Graduate Rigor.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

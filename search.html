@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search Curriculum | MS Big Data</title>
+  <meta name="description" content="Search across all 81 lessons in MS Big Data.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-root="" data-page-id="search" data-title="Course Search">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Curriculum Search</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Global Search Portal</div>
+        <h1>Search the Big Data Curriculum</h1>
+        <p class="lead">Search across all 17 weeks, 81 lessons, architecture patterns, and lab guides.</p>
+        <input id="mainSearchInput" class="site-search-input" style="max-width: 600px; padding: 0.85rem 1.25rem; font-size: 1.1rem;" type="search" placeholder="Type keywords (e.g. Spark, Kafka, Iceberg, dbt, Feature Store)..." autofocus>
+      </header>
+      <div id="searchResultsList" style="margin-top: 2rem;"></div>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="assets/js/nav-data.js"></script>
+<script src="assets/js/search-index.js"></script>
+<script src="assets/js/glossary-data.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('mainSearchInput');
+    const container = document.getElementById('searchResultsList');
+    const index = window.SEARCH_INDEX || [];
+
+    function search() {
+      const q = input.value.trim().toLowerCase();
+      if (!q) {
+        container.innerHTML = '<div style="color:var(--text-muted);">Enter a search query above to explore all 81 lessons.</div>';
+        return;
+      }
+      const matches = index.filter(i => 
+        i.title.toLowerCase().includes(q) || 
+        (i.summary && i.summary.toLowerCase().includes(q)) || 
+        (i.keywords && i.keywords.toLowerCase().includes(q))
+      );
+      if (matches.length === 0) {
+        container.innerHTML = `<div style="color:var(--text-muted);">No lessons matched "<strong>${q}</strong>".</div>`;
+        return;
+      }
+      container.innerHTML = `
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.5rem;">Found ${matches.length} matching lessons:</p>
+        <div class="grid">
+          ${matches.map(m => `
+            <article class="card">
+              <span style="font-size:0.75rem; color:var(--accent-cyan); font-weight:700;">${m.week} · ${m.difficulty || 'Intermediate'}</span>
+              <h3 style="margin:0.4rem 0 0.6rem;">${m.title}</h3>
+              <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:1.25rem;">${m.summary}</p>
+              <a class="btn btn-primary btn-sm" style="margin-top:auto;" href="${m.url}">Read Lesson →</a>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    input.addEventListener('input', search);
+    search();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 6.3: Lakehouse Table Formats: Apache Iceberg, Delta Lake, and Hudi | MS Big Data</title>
+  <meta name="description" content="Bringing ACID transactions, snapshot isolation, time travel, and schema evolution directly to open cloud object storage files.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body data-root="../../" data-page-id="week-06/lesson-6-3" data-title="Lesson 6.3: Lakehouse Table Formats: Apache Iceberg, Delta Lake, and Hudi">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <a href="index.html">Week 6</a>
+        <span class="separator">/</span>
+        <span>Lesson 6.3</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 6 — Warehouses &amp; Lakehouses</div>
+        <h1>Lesson 6.3: Lakehouse Table Formats: Apache Iceberg, Delta Lake, and Hudi</h1>
+        <p class="lead">Bringing ACID transactions, snapshot isolation, time travel, and schema evolution directly to open cloud object storage files.</p>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <strong>Estimated Reading</strong>
+            <span>80 min</span>
+          </div>
+          <div class="meta-item">
+            <strong>Difficulty</strong>
+            <span>Advanced</span>
+          </div>
+          <div class="meta-item">
+            <strong>Practice Lab</strong>
+            <span>3 hours</span>
+          </div>
+          <div class="meta-item">
+            <strong>Prerequisite</strong>
+            <span>Lesson 6.2</span>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="bookmarkBtn" class="btn">☆ Bookmark</button>
+          <button id="completeBtn" class="btn">Mark Complete</button>
+          <button id="quizModeBtn" class="btn">💡 Quiz Mode</button>
+          <button class="print-page btn">📄 Export PDF</button>
+          <button class="theme-toggle btn">🌓 Theme</button>
+        </div>
+      </header>
+      <div class="layout-article">
+        <article class="article">
+          
+      <section id="introduction">
+        <h2>1. Introduction & Theoretical Intuition</h2>
+        <p><strong>Core Principle:</strong> Bringing ACID transactions, snapshot isolation, time travel, and schema evolution directly to open cloud object storage files.</p>
+        <p>In modern enterprise architectures, <strong>Lakehouse Table Formats: Apache Iceberg, Delta Lake, and Hudi</strong> represents a critical engineering layer. As corporate datasets expand from gigabytes to petabytes and exabytes, single-machine abstractions break down due to immutable hardware physics: memory bus bandwidth limitations, CPU cache thrashing, disk I/O saturation, and network bisection bandwidth constraints.</p>
+        <p>Mastering this topic enables data engineers and platform architects to design scalable, fault-tolerant, cost-effective architectures capable of powering mission-critical real-time analytics, lakehouse repositories, and generative AI pipelines.</p>
+        <details class="callout warning"><summary>⚠️ Production Boundary Rule</summary><p>All lab practices in this curriculum execute exclusively against isolated sandbox datasets or local containerized clusters. Never run unapproved scraping, large extracts, or load tests against production systems without signed authorization.</p></details>
+      </section>
+
+      <section id="learning-outcomes">
+        <h2>2. Graduate Learning Outcomes</h2>
+        <p>Upon completing this lesson, you will be able to:</p>
+        <ul>
+          <li>Articulate the theoretical and physical mechanics of <strong>Lakehouse Table Formats: Apache Iceberg, Delta Lake, and Hudi</strong> from first principles.</li>
+          <li>Evaluate architectural trade-offs between latency, throughput, storage cost, and operational complexity.</li>
+          <li>Design and write production-grade data processing pipelines with automated error handling and testing.</li>
+          <li>Implement automated quality checks, schema evolution rules, and monitoring alerts.</li>
+          <li>Formulate formal Architecture Decision Records (ADRs) justifying technical choices to leadership.</li>
+        </ul>
+      </section>
+
+      <section id="prerequisites">
+        <h2>3. Prerequisites & Formal Boundary Conditions</h2>
+        <p>Required Background: <strong>Lesson 6.2</strong>.</p>
+        <p>Key definitions to understand before proceeding:</p>
+        <ul>
+          <li><strong>Throughput:</strong> The volume of data processed per unit of time (e.g., Megabytes/second, Events/second).</li>
+          <li><strong>Latency:</strong> The time elapsed between an event's generation and its availability in consumption layers.</li>
+          <li><strong>Idempotency:</strong> The guarantee that re-running an operation produces identical results without data duplication.</li>
+          <li><strong>Data Lineage:</strong> The complete audit trail of data origin, transformations, and downstream dependencies.</li>
+        </ul>
+      </section>
+
+      <section id="core-concepts">
+        <h2>4. Core Concepts & First-Principles Deconstruction</h2>
+        
+          <h3>4.1 Distributed Commit Logs: Apache Kafka Architecture</h3>
+          <p>Traditional message queues (RabbitMQ, ActiveMQ) delete messages upon consumer acknowledgment and maintain queue state in complex mutable indexes. In contrast, <strong>Apache Kafka</strong> is a distributed, append-only partitioned commit log built on the following storage principles:</p>
+          <ul>
+            <li><strong>Sequential Disk I/O:</strong> Writes append sequentially to the tail of an active log segment. Sequential disk write bandwidth on standard NVMe drives reaches $3.5\\text{ GB/s}$, rivaling random memory access throughput.</li>
+            <li><strong>Zero-Copy Transfer (<code>sendfile</code>):</strong> When consumers request records, Kafka uses the Linux kernel system call <code>sendfile()</code>. Data transfers directly from OS Page Cache to the network socket buffer, completely bypassing JVM application memory space.</li>
+            <li><strong>Partition Sharding & Consumer Groups:</strong> Topics are split into independent immutable partitions. Consumer groups coordinate partition assignments via the Group Coordinator and Incremental Cooperative Rebalancing protocols.</li>
+          </ul>
+
+          <h3>4.2 Event Time, Processing Time, and Watermarking Theory</h3>
+          <p>In streaming systems (Apache Flink, Spark Structured Streaming), the wall-clock time at which an event reaches an operator (<em>Processing Time</em>) rarely matches the timestamp at which the event occurred in the physical world (<em>Event Time</em>), due to mobile network disconnects, queue delays, and clock skew.</p>
+          <p>The <strong>Google MillWheel / Apache Flink Dataflow Model</strong> handles unbounded streams via <strong>Watermarks</strong>: a monotonically increasing timestamp metric $W(t)$ asserting that no further events with timestamp $E < W(t)$ will be observed. If an event arrives with $E < W(t)$, it is categorized as <em>Late Data</em> and either routed to a Dead-Letter side output or triggers an accumulator revision.</p>
+
+          <h3>4.3 Lakehouse Table Formats: Apache Iceberg & Delta Lake</h3>
+          <p>Data Lakes built on raw files (Parquet on S3) suffer from concurrency collisions, lack of ACID transactions, inability to perform in-place row deletes, and metadata bottleneck failures when directory listings exceed millions of objects.</p>
+          <p>Modern <strong>Lakehouse Table Formats</strong> bring ACID guarantees directly to cloud object storage:</p>
+          <ul>
+            <li><strong>Apache Iceberg:</strong> Tracks tables using a hierarchical metadata tree: <code>Iceberg Catalog</code> $\to$ <code>Metadata JSON</code> $\to$ <code>Manifest List Avro</code> $\to$ <code>Manifest File Avro</code> $\to$ <code>Parquet Data Files</code>. Supports snapshot isolation, partition evolution without rewriting tables, and hidden partitioning.</li>
+            <li><strong>Delta Lake:</strong> Employs an append-only JSON transaction log (<code>_delta_log/000000.json</code>) with periodic Parquet checkpoint summaries. Coordinates concurrent writes via optimistic concurrency control (OCC).</li>
+          </ul>
+        
+      </section>
+
+      <section id="visual-learning">
+        <h2>5. Visual Architecture & Distributed Flow Diagrams</h2>
+        <p>The following diagram models the data movement and component interactions for this module:</p>
+        <div class="diagram"><pre class="mermaid">
+flowchart LR
+  subgraph Ingestion_Pipeline [Distributed Commit Log & Lakehouse]
+    K[Apache Kafka Cluster] -->|Zero-Copy Stream| F[Apache Flink Stream Processor]
+    F -->|Raw Append| B[(🥉 Medallion Bronze: JSON/Avro)]
+    B -->|Schema Enforce & Deduplicate| S[(🥈 Medallion Silver: Apache Iceberg)]
+    S -->|Aggregate & Star Schema| G[(🥇 Medallion Gold: Parquet Warehouses)]
+  end
+  G --> BI[Executive BI Dashboards]
+  G --> ML[Online ML Feature Store]
+</pre></div>
+      </section>
+
+      <section id="mind-maps">
+        <h2>6. Mind Maps & Structural Taxonomies</h2>
+        <ul>
+          <li><strong>Infrastructure Dimensions:</strong> Compute Nodes · Network Fabric · NVMe Scratch Disks · S3 Storage Pools</li>
+          <li><strong>Operational Lifecycle:</strong> Ingestion → Schema Validation → Transformation → Quality Gate → Serving</li>
+          <li><strong>Governance Pillars:</strong> Ownership · Access Control · Lineage Tracking · SLA Monitoring · Privacy Rules</li>
+        </ul>
+      </section>
+
+      <section id="mathematical-foundations">
+        <h2>7. Mathematical & Performance Foundations</h2>
+        
+          <p><strong>Stream Watermarking Latency & Kafka Throughput Math:</strong></p>
+          <p>Let incoming stream events possess event timestamps $E_i$ and arrival times $A_i$. The heuristic bounded out-of-orderness watermark with delay bound $\\Delta_{\\text{delay}}$ is defined as:</p>
+          $$W(t) = \\max_{i=1}^n (E_i) - \\Delta_{\\text{delay}}$$
+          <p>An event arriving at system time $t$ with event timestamp $E_{\\text{curr}}$ is declared late if:</p>
+          $$E_{\\text{curr}} < W(t) \\iff E_{\\text{curr}} < \\max(E) - \\Delta_{\\text{delay}}$$
+          <p><strong>Optimal Kafka Topic Partition Count:</strong></p>
+          $$\\text{Partitions } P = \\max\\left(\\frac{\\text{Target Ingestion Throughput } T}{\\text{Single Producer Throughput } p_{\\text{max}}}, \\frac{T}{\\text{Single Consumer Throughput } c_{\\text{max}}}\\right)$$
+          <p>For a target throughput of $T = 500\\text{ MB/s}$ where individual consumer instances process $c_{\\text{max}} = 25\\text{ MB/s}$:</p>
+          $$P = \\frac{500\\text{ MB/s}}{25\\text{ MB/s}} = 20\\text{ partitions}$$
+        
+      </section>
+
+      <section id="practical-examples">
+        <h2>8. Practical Industry Applications</h2>
+        <p><strong>Global E-Commerce:</strong> Processing millions of checkout events per second with sub-second fraud detection and nightly financial reconciliation.</p>
+        <p><strong>FinTech & Banking:</strong> High-frequency transaction auditing with immutable ledger compliance and real-time AML scoring.</p>
+        <p><strong>Connected IoT Fleets:</strong> Ingesting terabytes of sensor telemetry per hour for predictive maintenance and anomaly alerts.</p>
+      </section>
+
+      <section id="code-examples">
+        <h2>9. Production Code Examples</h2>
+        <h4>Analytical SQL Implementation</h4>
+        <pre><code class="language-sql">-- Delta Lake / Iceberg ACID Upsert (MERGE INTO)
+MERGE INTO lakehouse_gold.dim_customers AS target
+USING (
+    SELECT 
+        customer_id,
+        first_name,
+        last_name,
+        email,
+        address,
+        updated_at,
+        ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY updated_at DESC) AS rn
+    FROM lakehouse_silver.stg_customer_updates
+) AS source
+ON target.customer_id = source.customer_id AND source.rn = 1
+WHEN MATCHED AND source.updated_at > target.updated_at THEN
+    UPDATE SET 
+        target.first_name = source.first_name,
+        target.last_name = source.last_name,
+        target.email = source.email,
+        target.address = source.address,
+        target.updated_at = source.updated_at
+WHEN NOT MATCHED THEN
+    INSERT (customer_id, first_name, last_name, email, address, updated_at)
+    VALUES (source.customer_id, source.first_name, source.last_name, source.email, source.address, source.updated_at);</code></pre>
+        <h4>Python / Distributed Engine Pipeline</h4>
+        <pre><code class="language-python">#!/usr/bin/env python3
+"""
+PyFlink Event-Time Windowing & Out-of-Order Watermark Simulation:
+Computing tumbling window metrics with late-event side outputs.
+"""
+import time
+from dataclasses import dataclass
+from typing import List, Tuple
+
+@dataclass
+class StreamEvent:
+    event_id: str
+    user_id: str
+    amount: float
+    event_time_epoch: int
+
+class StreamingWindowEngine:
+    def __init__(self, window_size_sec: int = 60, allowed_lateness_sec: int = 15):
+        self.window_size = window_size_sec
+        self.lateness = allowed_lateness_sec
+        self.max_event_time = 0
+        self.windows: dict[int, list[StreamEvent]] = {}
+        self.dead_letter_queue: list[StreamEvent] = []
+
+    def process_event(self, event: StreamEvent) -> None:
+        # Update watermark tracking
+        if event.event_time_epoch > self.max_event_time:
+            self.max_event_time = event.event_time_epoch
+        
+        current_watermark = self.max_event_time - self.lateness
+        
+        # Check if event is dropped as late data
+        if event.event_time_epoch < current_watermark:
+            print(f"[LATE_DATA] Event {event.event_id} arrived behind watermark {current_watermark}. Routing to DLQ.")
+            self.dead_letter_queue.append(event)
+            return
+
+        # Calculate tumbling window start
+        window_start = (event.event_time_epoch // self.window_size) * self.window_size
+        if window_start not in self.windows:
+            self.windows[window_start] = []
+        self.windows[window_start].append(event)
+
+if __name__ == "__main__":
+    engine = StreamingWindowEngine(window_size_sec=10, allowed_lateness_sec=5)
+    # Stream simulated events
+    engine.process_event(StreamEvent("E1", "U1", 50.0, 100))
+    engine.process_event(StreamEvent("E2", "U2", 80.0, 108))
+    engine.process_event(StreamEvent("E3", "U1", 30.0, 115)) # Advances watermark to 110
+    engine.process_event(StreamEvent("E4", "U3", 95.0, 102)) # Arrives with t=102 < 110 (Late!)</code></pre>
+      </section>
+
+      <section id="security-perspective">
+        <h2>10. Security & Threat Modeling Perspective</h2>
+        <p>Big data platforms handle sensitive organizational assets. Enforce the principle of least privilege (PoLP):</p>
+        <ul>
+          <li><strong>Encryption:</strong> Enforce AES-256 at rest (KMS customer-managed keys) and TLS 1.3 in transit.</li>
+          <li><strong>Access Governance:</strong> Implement attribute-based access control (ABAC) with automated column masking and row-level filtering.</li>
+          <li><strong>Immutability:</strong> Protect raw landing zones with write-once-read-many (WORM) object locks.</li>
+        </ul>
+      </section>
+
+      <section id="industry-perspective">
+        <h2>11. Industry Practice & Platform Engineering Realities</h2>
+        <p>In production enterprise environments, tools change rapidly but core architectural patterns persist. Top engineering organizations prioritize pipeline observability, idempotency, automated regression testing, and transparent cost allocation over shiny new vendor tools.</p>
+      </section>
+
+      <section id="research-perspective">
+        <h2>12. Academic & Research Perspective</h2>
+        <p>Key foundational research papers shaping this topic include seminal publications from ACM SIGMOD, VLDB, and IEEE ICDE on distributed query compilation, consensus protocols, and columnar lakehouse storage optimizations.</p>
+      </section>
+
+      <section id="case-studies">
+        <h2>13. Real-World Case Studies</h2>
+        <p><strong>Netflix Keystone:</strong> Real-time streaming platform routing over 500 billion events daily using Apache Kafka and Apache Flink with automated zero-downtime cluster rebalancing.</p>
+        <p><strong>Uber Michelangelo:</strong> Scalable machine learning platform managing millions of real-time features using centralized feature stores and distributed Spark training pipelines.</p>
+      </section>
+
+      <section id="misconceptions">
+        <h2>14. Common Misconceptions & Traps</h2>
+        <ul>
+          <li><em>Misconception:</em> "Big Data always requires Hadoop clusters." — <strong>Reality:</strong> Modern platforms frequently use cloud object storage, serverless compute, and Lakehouse formats (Iceberg/Delta).</li>
+          <li><em>Misconception:</em> "Real-time streaming is always superior to batch." — <strong>Reality:</strong> Streaming introduces significant state management complexity and operational cost; use batch when SLAs allow.</li>
+        </ul>
+      </section>
+
+      <section id="summary">
+        <h2>15. Summary & Key Takeaways</h2>
+        <p><strong>Lakehouse Table Formats: Apache Iceberg, Delta Lake, and Hudi</strong> provides the bedrock for scalable data architectures. Always prioritize data quality, idempotency, and explicit schema contracts before optimizing raw compute execution speed.</p>
+      </section>
+
+      <section id="lesson-glossary">
+        <h2>16. Module Glossary</h2>
+        <dl>
+          <dt>Scalability</dt><dd>The ability of a system to handle increased load by adding hardware resources (horizontal or vertical).</dd>
+          <dt>Data Quality SLA</dt><dd>Contractual agreement defining freshness, completeness, and error tolerances for datasets.</dd>
+          <dt>Lineage Graph</dt><dd>A directed acyclic graph mapping data dependencies from upstream sources to downstream reports.</dd>
+        </dl>
+      </section>
+
+      <section id="self-assessment">
+        <h2>17. Self-Assessment & Interactive Quiz</h2>
+        <ol class="quiz-list">
+          <li data-answer="Decoupling compute from storage allows scaling processing power independently of storage costs, preventing costly hardware over-provisioning and enabling elastic cloud scaling.">Why do modern big data platforms decouple storage from compute?</li>
+          <li data-answer="An idempotent pipeline guarantees that executing the same job multiple times produces the exact same output without duplicate records or corrupted state, which is critical for non-destructive backfills.">What is the primary benefit of designing idempotent data pipelines?</li>
+          <li data-answer="Columnar storage reads only the specific columns requested in an analytical query, drastically reducing disk I/O and enabling vectorized CPU SIMD decompression.">How does columnar storage (like Parquet) accelerate analytical aggregations?</li>
+        </ol>
+      </section>
+
+      <section id="practice-lab">
+        <h2>18. Hands-On Practice Lab & Engineering Drill</h2>
+        
+          <p><strong>Lab Objective:</strong> Build an end-to-end Medallion Lakehouse pipeline using Python and DuckDB/Parquet, ingesting raw JSON records into Bronze, applying deduplication and schema validation into Silver, and materializing ACID aggregated Gold tables.</p>
+
+          <h4>Step 1: Raw JSON Event Generator</h4>
+          <pre><code class="language-python"># generate_bronze_stream.py
+import json, random, time, os
+
+os.makedirs("lakehouse_lab/bronze", exist_ok=True)
+events = []
+for i in range(1, 5001):
+    events.append({
+        "raw_payload_id": f"PAYLOAD_{i:06d}",
+        "user_id": f"USR_{random.randint(1, 100)}",
+        "action": random.choice(["CLICK", "PURCHASE", "LOGIN", "VIEW"]),
+        "amount": round(random.uniform(5.0, 250.0), 2) if random.random() > 0.4 else None,
+        "event_timestamp": int(time.time()) - random.randint(0, 3600)
+    })
+
+with open("lakehouse_lab/bronze/events_batch_001.json", "w") as f:
+    for e in events:
+        f.write(json.dumps(e) + "\\n")
+print("Wrote 5,000 raw events to lakehouse_lab/bronze/events_batch_001.json")</code></pre>
+
+          <h4>Step 2: Bronze to Silver Cleansing & Deduplication</h4>
+          <pre><code class="language-python"># process_silver.py
+import duckdb, os
+
+os.makedirs("lakehouse_lab/silver", exist_ok=True)
+con = duckdb.connect()
+
+# Read raw JSON Bronze, apply schema validation, filter nulls, and write to Parquet
+con.execute(\"\"\"
+CREATE OR REPLACE TABLE silver_events AS
+SELECT 
+    raw_payload_id AS event_id,
+    user_id,
+    action,
+    COALESCE(amount, 0.0) AS amount_usd,
+    to_timestamp(event_timestamp) AS event_time,
+    CURRENT_TIMESTAMP AS _ingested_at
+FROM read_json_auto('lakehouse_lab/bronze/*.json')
+WHERE user_id IS NOT NULL;
+\"\"\")
+
+con.execute(\"\"\"
+COPY silver_events TO 'lakehouse_lab/silver/events.parquet' (FORMAT PARQUET, COMPRESSION ZSTD);
+\"\"\")
+print("Successfully transformed Bronze -> Silver Parquet table.")</code></pre>
+
+          <h4>Step 3: Silver to Gold Dimensional Aggregations</h4>
+          <pre><code class="language-python"># process_gold.py
+import duckdb, os
+
+os.makedirs("lakehouse_lab/gold", exist_ok=True)
+con = duckdb.connect()
+
+con.execute(\"\"\"
+CREATE OR REPLACE TABLE gold_user_revenue_metrics AS
+SELECT 
+    user_id,
+    COUNT(*) AS total_interactions,
+    SUM(CASE WHEN action = 'PURCHASE' THEN 1 ELSE 0 END) AS purchase_count,
+    ROUND(SUM(amount_usd), 2) AS total_revenue_usd,
+    ROUND(AVG(amount_usd), 2) AS avg_order_value_usd,
+    MAX(event_time) AS last_active_time
+FROM read_parquet('lakehouse_lab/silver/events.parquet')
+GROUP BY user_id
+ORDER BY total_revenue_usd DESC;
+\"\"\")
+
+con.execute(\"\"\"
+COPY gold_user_revenue_metrics TO 'lakehouse_lab/gold/user_metrics.parquet' (FORMAT PARQUET);
+\"\"\")
+
+print("--- Top 5 Gold Tier Users ---")
+print(con.execute("SELECT * FROM gold_user_revenue_metrics LIMIT 5").df())</code></pre>
+
+          <h4>Step 4: Graduate Extension Challenge</h4>
+          <p>Add schema evolution handling to <code>process_silver.py</code> where new incoming JSON batches contain an optional <code>device_os</code> attribute, and demonstrate backward-compatible Parquet schema reads without corrupting existing records.</p>
+        
+      </section>
+
+      <section id="further-reading">
+        <h2>19. Further Reading & Citations</h2>
+        <ul>
+          <li><em>Designing Data-Intensive Applications</em> — Martin Kleppmann (O'Reilly)</li>
+          <li><em>Fundamentals of Data Engineering</em> — Joe Reis &amp; Matt Housley (O'Reilly)</li>
+          <li>Official documentation for Apache Spark, Apache Kafka, Apache Iceberg, and dbt.</li>
+        </ul>
+      </section>
+
+      <div class="prev-next"><a class="btn" href="data-lakes-and-object-storage.html">← Data Lakes, Object Storage, and Column</a><a class="btn btn-primary" href="medallion-architecture-and-curated-layers.html">Medallion Architecture: Bronze, Silver →</a></div>
+    
+        </article>
+        <aside class="toc">
+          <h2>On This Page</h2>
+          <ol id="tocList"></ol>
+        </aside>
+      </div>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Designed for Graduate Rigor &amp; Professional Mastery.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

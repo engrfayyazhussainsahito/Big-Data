@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecture Blueprint | MS Big Data</title>
+  <meta name="description" content="Technical specifications and repository architecture for MS Big Data.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body data-root="" data-page-id="architecture" data-title="Architecture Blueprint">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Architecture Blueprint</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">System Specifications</div>
+        <h1>Enterprise Data Architecture Blueprint</h1>
+        <p class="lead">Reference topology and structural design specifications for the MS Big Data learning platform.</p>
+      </header>
+      <div class="layout-article">
+        <article class="article">
+          <h2>1. End-to-End Enterprise Data Topology</h2>
+          <div class="diagram"><pre class="mermaid">
+flowchart TB
+  subgraph Ingestion_Zone [1. Ingestion Layer]
+    OLTP[(Postgres/MySQL)] -->|WAL CDC| Deb[Debezium]
+    App[Mobile/Web Apps] -->|REST/SDK| Gate[API Gateway]
+    Gate --> Kaf[(Apache Kafka / Redpanda)]
+    Deb --> Kaf
+  end
+  subgraph Stream_Batch_Zone [2. Processing Engine]
+    Kaf --> Flink[Apache Flink: Stateful Streams]
+    Kaf --> Spark[Apache Spark: Micro-Batch & ETL]
+  end
+  subgraph Storage_Lakehouse [3. Medallion Lakehouse]
+    Flink -->|Append| B[(🥉 Bronze: Raw Parquet)]
+    Spark -->|Cleanse & Validate| S[(🥈 Silver: Conformed Iceberg)]
+    S -->|dbt Aggregate| G[(🥇 Gold: Star Schema)]
+  end
+  subgraph Serving_Governance [4. Serving & Lineage]
+    G --> Trino[Trino / ClickHouse Engine]
+    Trino --> BI[BI Dashboards / Superset]
+    Trino --> API[Reverse ETL & ML Models]
+    S -.-> Catalog[(DataHub / OpenMetadata)]
+    G -.-> Catalog
+  end
+</pre></div>
+          <h2>2. Repository Directory Structure</h2>
+          <pre><code>big-data-platform/
+├── index.html                    # Platform Landing Page & Tool Showcase
+├── interactive-lab.html          # Interactive Sandboxes (SQL, Sizer, Medallion)
+├── architecture.html             # Platform Architecture Specifications
+├── glossary.html                 # Interactive Searchable Glossary
+├── search.html                   # Global Full-Text Search Engine
+├── generate_big_data_platform.py # Master Python Generator
+├── serve.py                      # Local Web Server
+├── assets/
+│   ├── css/styles.css            # Modern High-Performance Design System
+│   └── js/
+│       ├── site.js               # Client Engine, TOC ScrollSpy, Search Modal
+│       ├── interactive-tools.js  # SQL Engine, Cluster Sizer, Medallion Inspector
+│       ├── nav-data.js           # Structured 17-Week Curriculum Metadata
+│       ├── search-index.js       # Full-Text Search Index for 81 Lessons
+│       └── glossary-data.js      # Terminology Database (150+ Terms)
+└── weeks/
+    ├── week-00/ ... week-16/     # 17 Module Directories (81 Detailed Lessons)</code></pre>
+        </article>
+        <aside class="toc">
+          <h2>On This Page</h2>
+          <ol id="tocList"></ol>
+        </aside>
+      </div>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="assets/js/nav-data.js"></script>
+<script src="assets/js/search-index.js"></script>
+<script src="assets/js/glossary-data.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

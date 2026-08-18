@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 3: Distributed Systems, Hadoop, and Apache Spark | MS Big Data</title>
+  <meta name="description" content="Understand horizontal scaling, consensus, HDFS, YARN, MapReduce, and how Apache Spark revolutionized in-memory big data processing.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body data-root="../../" data-page-id="week-03" data-title="Week 3: Distributed Systems, Hadoop, and Apache Spark">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Week 3 Overview</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 3 — Distributed Computing</div>
+        <h1>Week 3: Distributed Systems, Hadoop, and Apache Spark</h1>
+        <p class="lead">Understand horizontal scaling, consensus, HDFS, YARN, MapReduce, and how Apache Spark revolutionized in-memory big data processing.</p>
+      </header>
+      <section style="margin-bottom: 2.5rem;">
+        <h2>Week Learning Objectives</h2>
+        <ul style="margin-top: 1rem; line-height: 1.8; color: var(--text-secondary);">
+          <li>Explain distributed compute trade-offs, network partitioning, and CAP theorem.</li><li>Deconstruct Hadoop architecture: HDFS NameNode/DataNodes and YARN Resource Manager.</li><li>Master Apache Spark core: RDDs, DAG execution, lazy evaluation, and stages/tasks.</li><li>Write Spark SQL transformations with DataFrames and Catalyst optimization.</li><li>Perform cluster sizing, executor memory tuning, and shuffle partition management.</li>
+        </ul>
+      </section>
+      <h2>Lessons in this Module</h2>
+      <section class="grid">
+        
+      <article class="card week-card">
+        <span class="week-num">Lesson 3.1 · Intermediate</span>
+        <h3>Distributed Systems from First Principles</h3>
+        <p>When one server runs out of CPU, RAM, or IOPS: consensus protocols, RPCs, split-brain risks, and the fundamental physics of network latency.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="distributed-systems-from-first-principles.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 3.2 · Intermediate</span>
+        <h3>Hadoop Ecosystem: HDFS, MapReduce, and YARN</h3>
+        <p>How Hadoop commoditized cluster storage with block replication (HDFS) and decoupled resource management (YARN) from computation.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 80 min</span>
+          <a class="btn btn-primary btn-sm" href="hadoop-ecosystem-hdfs-mapreduce-yarn.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 3.3 · Intermediate</span>
+        <h3>Apache Spark Architecture and Resilient Distributed Datasets (RDDs)</h3>
+        <p>How Spark achieved 100x speedups over disk-bound MapReduce using in-memory lineage graphs, directed acyclic graphs (DAGs), and lazy evaluation.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 85 min</span>
+          <a class="btn btn-primary btn-sm" href="apache-spark-architecture-and-rdds.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 3.4 · Intermediate</span>
+        <h3>Spark SQL, DataFrames, and the Catalyst Optimizer</h3>
+        <p>High-level structured APIs: DataFrames, Tungsten physical code generation, and the Catalyst tree-rewriting query optimizer.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 80 min</span>
+          <a class="btn btn-primary btn-sm" href="spark-sql-dataframes-and-catalyst.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 3.5 · Advanced</span>
+        <h3>Cluster Sizing, Fault Tolerance, and CAP Theorem</h3>
+        <p>Formulate Spark executor memory allocations, cores per executor, shuffle partition sizing, and evaluate Consistency vs Availability vs Partition tolerance.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="cluster-sizing-fault-tolerance-and-cap-theorem.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      </section>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Modeled for Graduate Rigor.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

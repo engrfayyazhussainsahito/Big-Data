@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 5: Real-Time Streaming: Kafka, Flink, and Event Logs | MS Big Data</title>
+  <meta name="description" content="Process continuous event streams with Apache Kafka, Apache Flink, and Spark Structured Streaming using event time semantics and watermarks.">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+<body data-root="../../" data-page-id="week-05" data-title="Week 5: Real-Time Streaming: Kafka, Flink, and Event Logs">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Week 5 Overview</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Week 5 — Stream Processing</div>
+        <h1>Week 5: Real-Time Streaming: Kafka, Flink, and Event Logs</h1>
+        <p class="lead">Process continuous event streams with Apache Kafka, Apache Flink, and Spark Structured Streaming using event time semantics and watermarks.</p>
+      </header>
+      <section style="margin-bottom: 2.5rem;">
+        <h2>Week Learning Objectives</h2>
+        <ul style="margin-top: 1rem; line-height: 1.8; color: var(--text-secondary);">
+          <li>Contrast bounded batch processing against unbounded continuous stream processing.</li><li>Deconstruct Apache Kafka architecture: topics, partitions, consumer groups, and offset commit logs.</li><li>Apply Event Time, Processing Time, and Ingestion Time semantics with Watermarking.</li><li>Build stateful stream aggregations with tumbling, sliding, and session windows.</li><li>Analyze delivery guarantees: At-Least-Once, At-Most-Once, and Exactly-Once (EOS).</li>
+        </ul>
+      </section>
+      <h2>Lessons in this Module</h2>
+      <section class="grid">
+        
+      <article class="card week-card">
+        <span class="week-num">Lesson 5.1 · Intermediate</span>
+        <h3>Stream Processing from First Principles</h3>
+        <p>When hourly or daily batches are too slow: unbounded streams, event-driven architectures, low latency vs compute cost trade-offs.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="stream-processing-from-first-principles.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 5.2 · Intermediate</span>
+        <h3>Kafka and Distributed Commit Log Architecture</h3>
+        <p>How Kafka achieves millions of messages per second with sequential disk I/O, page cache zero-copy, and partitioned consumer groups.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 80 min</span>
+          <a class="btn btn-primary btn-sm" href="kafka-and-event-log-architecture.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 5.3 · Advanced</span>
+        <h3>Windowing, Event Time, and Watermarks</h3>
+        <p>Handling out-of-order data: define event timestamps, configure watermark delay thresholds, and execute tumbling vs sliding window aggregations.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 75 min</span>
+          <a class="btn btn-primary btn-sm" href="windowing-event-time-and-watermarks.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 5.4 · Advanced</span>
+        <h3>Spark Structured Streaming vs Apache Flink</h3>
+        <p>Micro-batching vs true event-at-a-time streaming: Compare Spark Structured Streaming triggers with Flink's asynchronous checkpointing barrier model.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 85 min</span>
+          <a class="btn btn-primary btn-sm" href="spark-structured-streaming-and-flink.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      <article class="card week-card">
+        <span class="week-num">Lesson 5.5 · Advanced</span>
+        <h3>Exactly-Once Semantics (EOS) and Late Data Handling</h3>
+        <p>Two-phase commit transactions, idempotent sinks, side-outputs for dead-letter late arrivals, and deduplication state management.</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+          <span style="font-size:0.8rem; color:var(--text-muted);">⏱ 70 min</span>
+          <a class="btn btn-primary btn-sm" href="exactly-once-semantics-and-late-data.html">Start Lesson →</a>
+        </div>
+      </article>
+    
+      </section>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform · Modeled for Graduate Rigor.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="../../assets/js/nav-data.js"></script>
+<script src="../../assets/js/search-index.js"></script>
+<script src="../../assets/js/glossary-data.js"></script>
+<script src="../../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Big Data Glossary | MS Big Data</title>
+  <meta name="description" content="Comprehensive big data terminology and definitions.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-root="" data-page-id="glossary" data-title="Glossary">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="readingProgress"></div>
+<div class="mobile-topbar">
+  <button id="openSidebar" class="btn btn-sm">☰ Menu</button>
+  <span class="brand-text">MS Big Data</span>
+  <button class="theme-toggle btn btn-sm">Theme</button>
+</div>
+<div class="site-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">BD</span>
+        <div>
+          <h1>MS Big Data</h1>
+          <small>Interactive Course</small>
+        </div>
+      </a>
+    </div>
+    <div class="nav-search">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="navSearch" class="site-search-input" type="search" placeholder="Search lessons (Ctrl+K)">
+        <span class="search-shortcut">⌘K</span>
+      </div>
+    </div>
+    <nav class="course-nav" id="courseNav"></nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn">🌓 Toggle Theme</button>
+      <span style="font-size:0.75rem; color:var(--text-muted);">v2.4 Pro</span>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <div class="page-wrap">
+      <div class="breadcrumbs">
+        <a href="index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Glossary</span>
+      </div>
+      <header class="hero">
+        <div class="eyebrow">Reference Library</div>
+        <h1>Big Data &amp; Data Engineering Glossary</h1>
+        <p class="lead">Quickly filter and reference essential concepts across distributed systems, streaming, lakehouse formats, and DataOps.</p>
+        <input id="glossaryFilterInput" class="site-search-input" style="max-width: 500px; padding: 0.75rem 1rem; font-size: 1rem;" type="search" placeholder="Filter terms (e.g. ACID, Spark, Iceberg, Kafka)...">
+      </header>
+      <div id="glossaryContentContainer" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));"></div>
+      <footer class="footer">
+        MS Big Data Interactive Learning Platform.
+      </footer>
+    </div>
+  </main>
+</div>
+<script src="assets/js/nav-data.js"></script>
+<script src="assets/js/search-index.js"></script>
+<script src="assets/js/glossary-data.js"></script>
+<script src="assets/js/site.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('glossaryContentContainer');
+    const input = document.getElementById('glossaryFilterInput');
+    const terms = window.GLOSSARY_DATA || [];
+
+    function render(list) {
+      if (list.length === 0) {
+        container.innerHTML = '<div style="padding:2rem; color:var(--text-muted);">No terms matched your search.</div>';
+        return;
+      }
+      container.innerHTML = list.map(item => `
+        <article class="card" style="padding:1.25rem;">
+          <h3 style="font-size:1.1rem; color:var(--accent-cyan); margin-bottom:0.4rem;">${item[0]}</h3>
+          <p style="font-size:0.9rem; color:var(--text-secondary); margin:0;">${item[1]}</p>
+        </article>
+      `).join('');
+    }
+
+    render(terms);
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      const filtered = terms.filter(t => t[0].toLowerCase().includes(q) || t[1].toLowerCase().includes(q));
+      render(filtered);
+    });
+  });
+</script>
+</body>
+</html>
